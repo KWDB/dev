@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-Hans" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-design/compiler" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.8.1">
+<title data-rh="true">KWDB SQL 编译和优化 | KWDB 开发者文档</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://kwdb.atomgit.net/dev/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://kwdb.atomgit.net/dev/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://kwdb.atomgit.net/dev/docs/design/compiler"><meta data-rh="true" property="og:locale" content="zh_Hans"><meta data-rh="true" name="docusaurus_locale" content="zh-Hans"><meta data-rh="true" name="docsearch:language" content="zh-Hans"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="KWDB SQL 编译和优化 | KWDB 开发者文档"><meta data-rh="true" name="description" content="1. 概述"><meta data-rh="true" property="og:description" content="1. 概述"><link data-rh="true" rel="alternate" hreflang="zh-CN" href="https:/kwdb.atomgit.net/dev/dev/docs/design/compiler"><link data-rh="true" rel="alternate" hreflang="en" href="https:/kwdb.atomgit.net/dev/en/dev/docs/design/compiler"><link data-rh="true" rel="alternate" hreflang="x-default" href="https:/kwdb.atomgit.net/dev/dev/docs/design/compiler"><link data-rh="true" rel="icon" href="/dev/img/favcion.svg"><link data-rh="true" rel="canonical" href="https://kwdb.atomgit.net/dev/docs/design/compiler"><link data-rh="true" rel="alternate" href="https://kwdb.atomgit.net/dev/docs/design/compiler" hreflang="zh-Hans"><link data-rh="true" rel="alternate" href="https://kwdb.atomgit.net/dev/docs/design/compiler" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"设计文档","item":"https://kwdb.atomgit.net/dev/docs/design"},{"@type":"ListItem","position":2,"name":"KWDB SQL 编译和优化","item":"https://kwdb.atomgit.net/dev/docs/design/compiler"}]}</script><link rel="preconnect" href="https://www.google-analytics.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KJW7LC2SEM"></script>
+<script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-KJW7LC2SEM",{anonymize_ip:!0})</script>
+<meta name="description" content="KWDB是面向AIoT物联网场景的分布式多模开源数据库，提供时序数据、关系数据、地理空间数据的统一存储和查询能力。支持高并发写入、实时查询、边缘计算等特性。">
+<meta name="keywords" content="KWDB,多模数据库,时序数据库,物联网数据库,AIoT,分布式数据库,开源数据库,时间序列,边缘计算,实时数据">
+<meta name="author" content="KWDB Team">
+<meta name="robots" content="index,follow">
+<meta property="og:title" content="KWDB 开发者文档 - 面向AIoT的分布式多模开源数据库">
+<meta property="og:description" content="KWDB是面向AIoT物联网场景的分布式多模开源数据库，提供时序数据、关系数据、地理空间数据的统一存储和查询能力。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kwdb.atomgit.net/dev/">
+<meta property="og:image" content="https://kwdb.atomgit.net/dev/img/docusaurus-social-card.jpg">
+<meta property="og:site_name" content="KWDB 开发者文档">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KWDB 开发者文档 - 面向AIoT的分布式多模开源数据库">
+<meta name="twitter:description" content="KWDB是面向AIoT物联网场景的分布式多模开源数据库，提供时序数据、关系数据、地理空间数据的统一存储和查询能力。">
+<meta name="twitter:image" content="https://kwdb.atomgit.net/dev/img/docusaurus-social-card.jpg">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="content-language" content="zh-CN"><link rel="stylesheet" href="/dev/assets/css/styles.69348aec.css">
+<script src="/dev/assets/js/runtime~main.1a56a561.js" defer="defer"></script>
+<script src="/dev/assets/js/main.3abb8b46.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/dev/img/KWDB-light.svg"><link rel="preload" as="image" href="/dev/img/KWDB-dark.svg"><div role="region" aria-label="跳到主要内容"><a class="skipToContent_k60n" href="#__docusaurus_skipToContent_fallback">跳到主要内容</a></div><nav aria-label="主导航" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="切换导航栏" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/dev/"><div class="navbar__logo"><img src="/dev/img/KWDB-light.svg" alt="KWDB Logo" class="themedComponent_r121 themedComponent--light_VEJ3"><img src="/dev/img/KWDB-dark.svg" alt="KWDB Logo" class="themedComponent_r121 themedComponent--dark_mS9D"></div><b class="navbar__title text--truncate">KWDB</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/dev/docs/intro">文档</a><a class="navbar__item navbar__link" href="/dev/tutorial">教程</a><a class="navbar__item navbar__link" href="/dev/download">下载</a><a class="navbar__item navbar__link" href="/dev/video">视频</a><a class="navbar__item navbar__link" href="/dev/competition">大赛</a><a class="navbar__item navbar__link" href="/dev/mvp">MVP</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/kwdb/kwdb" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-github-link" aria-label="GitHub repository"></a><a href="https://gitee.com/kwdb/kwdb" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link header-gitee-link" aria-label="Gitee repository"></a><div class="toggle_U9wR colorModeToggle_v_fA"><button class="clean-btn toggleButton_H6qk toggleButtonDisabled_KoXl" type="button" disabled="" title="system mode" aria-label="切换浅色/暗黑模式（当前为system mode）"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_wFaB lightToggleIcon_e2Or"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_wFaB darkToggleIcon_C7G0"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_wFaB systemToggleIcon_XGtR"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_w21C"><div class="navbar__search searchBarContainer_M2Dz" dir="ltr"><input placeholder="搜索" aria-label="Search" class="navbar__search-input searchInput_aTt8" value=""><div class="loadingRing_qZVR searchBarLoadingRing_pj8u"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_ZMfJ"><div class="docsWrapper_lQ69"><button aria-label="回到顶部" class="clean-btn theme-back-to-top-button backToTopButton__79m" type="button"></button><div class="docRoot_WA10"><aside class="theme-doc-sidebar-container docSidebarContainer_RoS4"><div class="sidebarViewport_LoXP"><div class="sidebar_oUjO"><nav aria-label="文档侧边栏" class="menu thin-scrollbar menu_aoz8"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/dev/docs/intro">KWDB 开发者手册</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/dev/docs/quickstart">快速开始</a><button aria-label="展开侧边栏分类 &#x27;快速开始&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/dev/docs/compilation">编译 KWDB</a><button aria-label="展开侧边栏分类 &#x27;编译 KWDB&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/dev/docs/development-environment">开发环境配置</a><button aria-label="展开侧边栏分类 &#x27;开发环境配置&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" href="/dev/docs/cli">CLI 命令参考</a><button aria-label="展开侧边栏分类 &#x27;CLI 命令参考&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" href="/dev/docs/design">设计文档</a><button aria-label="折叠侧边栏分类 &#x27;设计文档&#x27;" aria-expanded="true" type="button" class="clean-btn menu__caret"></button></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/dev/docs/design/compiler">KWDB SQL 编译和优化</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev/docs/design/executor">KWDB SQL 执行</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/dev/docs/design/storage">KWDB 存储模块架构介绍</a></li></ul></li></ul></nav></div></div></aside><main class="docMainContainer_NgP8"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_FZN1"><div class="docItemContainer_tesI"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_uZ3O" aria-label="页面路径"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="主页面" class="breadcrumbs__link" href="/dev/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_Vvw5"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><a class="breadcrumbs__link" href="/dev/docs/design"><span>设计文档</span></a></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">KWDB SQL 编译和优化</span></li></ul></nav><div class="tocCollapsible_o5_q theme-doc-toc-mobile tocMobile_nEWU"><button type="button" class="clean-btn tocCollapsibleButton_fI0F">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>KWDB SQL 编译和优化</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_S6oC" id="1-概述">1. 概述<a href="#1-概述" class="hash-link" aria-label="1. 概述的直接链接" title="1. 概述的直接链接">​</a></h2>
+<p>KWDB是一款 面向 AIoT 场景的分布式多模数据库 产品，支持在同一实例同时建立时序库和关系库并融合处理多模数据，具备千万级设备接入、百万级数据秒级写入、亿级数据秒级读取等时序数据高效处理能力，具有稳定安全、高可用、易运维等特点。</p>
+<p>KWDB的SQL引擎由解析器、优化器和执行器组成，编译优化部分主要介绍解析器和优化器。</p>
+<p>解析器的主要作用是将用户输入的SQL语句转换为KWDB能运行的结构，同时做一些必要的规范性校验。
+主要包括词法解析、语法解析和语义解析三个步骤。</p>
+<p>优化器的主要作用是将解析器生成的结构运用规则和成本的优化进行结构等价互换，再不改变SQL原意的前提下使其效率更高，成本更低。
+主要包括RBO优化、CBO优化和多模计算优化等。</p>
+<p><img decoding="async" loading="lazy" alt="flow_chart" src="/dev/assets/images/flow_chart-029f8ed4f79dce20ad04dca16b27c453.jpg" width="2560" height="1360" class="img_x6Wl"></p>
+<h2 class="anchor anchorWithStickyNavbar_S6oC" id="2-kwdb查询编译和优化基础架构">2 KWDB查询编译和优化基础架构<a href="#2-kwdb查询编译和优化基础架构" class="hash-link" aria-label="2 KWDB查询编译和优化基础架构的直接链接" title="2 KWDB查询编译和优化基础架构的直接链接">​</a></h2>
+<p>KWDB的编译阶段，主要对SQL语句进行三个步骤的处理，分别是词法解析，语法解析和语义解析。在语义解析阶段为了使计划更优，KWDB还会对计划进行RBO优化。</p>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="21-词法解析">2.1 词法解析<a href="#21-词法解析" class="hash-link" aria-label="2.1 词法解析的直接链接" title="2.1 词法解析的直接链接">​</a></h3>
+<p>KWDB的词法解析会根据yacc文件中定义的词法单元将SQL语句从字符流转换具备词法的词法单元列表tokens，如：关键字、标识符、常  量和运算符等。</p>
+<p>具体步骤如下：</p>
+<ul>
+<li>去除注释和空白。</li>
+<li>识别词法单元：扫描SQL字符流，分解识别词法单元。</li>
+<li>构建tokens：将识别出的词法单元按照SQL顺序排列，形成列表。</li>
+</ul>
+<p>例如有以下查询语句：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> a</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> b </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> t </span><span class="token keyword" style="color:#00009f">WHERE</span><span class="token plain"> c </span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">30</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>词法分析的结果如下：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain">（关键字）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">a（标识符）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain">（分隔符）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">b（标识符）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain">（关键字）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">t（标识符）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token keyword" style="color:#00009f">WHERE</span><span class="token plain">（关键字）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">c（标识符）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain">（运算符）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token number" style="color:#36acaa">30</span><span class="token plain">（常量）</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"></span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain">（分隔符）</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="22-语法解析">2.2 语法解析<a href="#22-语法解析" class="hash-link" aria-label="2.2 语法解析的直接链接" title="2.2 语法解析的直接链接">​</a></h3>
+<p>KWDB的语法解析会根据 yacc 文件中定义的语法遍历的对 tokens 进行识别，判断语法是否存在错误和规约冲突。</p>
+<p>无法生成语法树的情况如下：</p>
+<ul>
+<li>语法错误：在判断需要进行规约（生成语法）时校验失败，如：未定义的语法。</li>
+<li>移进-规约冲突：无法决定是移入（继续读取 token）还是规约（生成语法），通常是因为输入串中的符号可能会匹配多个产生式的右侧。</li>
+<li>规约-规约冲突：存在多个规约操作的可能性，无法确定应使用哪一个规约规则，存在歧义。</li>
+</ul>
+<p>在每次规约都正确完成，直到 tokens 遍历结束，最终会生成一个抽象语法树AST。</p>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="23-语义解析">2.3 语义解析<a href="#23-语义解析" class="hash-link" aria-label="2.3 语义解析的直接链接" title="2.3 语义解析的直接链接">​</a></h3>
+<p>KWDB的语义解析会对查询的语法树AST进行深入的分析，以确保查询在逻辑和语义上是有效的，并且能够正确地执行。</p>
+<p>具体操作如下：</p>
+<ul>
+<li>检查查询是否为SQL语言中的有效语句，其中包括对表和列的存在检查、数据类型检查，权限检查和约束校验等。</li>
+<li>解析名称，如表名或变量名的值。</li>
+<li>消除中间运算，如用1.0替换0.5+0.5。此也被成为常数折叠。</li>
+<li>确定用于中间结果的数据类型，如查询语句中包含子查询时。</li>
+</ul>
+<p>此步骤之后生成的计划已经可以转换为执行计划，但此时的计划并非最优计划，后续还需要进行优化。</p>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="23-rbo-优化">2.3 RBO 优化<a href="#23-rbo-优化" class="hash-link" aria-label="2.3 RBO 优化的直接链接" title="2.3 RBO 优化的直接链接">​</a></h3>
+<p>RBO(rule based optimization)是基于规则的优化，原理相当于关系代数的等价变换，用效率更优的等价表达式代替原有表达式。其典型的规则有列裁剪、谓词下推、投影消除等。</p>
+<p>具体分析如下：</p>
+<ul>
+<li>
+<p>列裁剪</p>
+<p>假设表t有 a、b、c、d四列,有以下查询语句：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> a </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> t </span><span class="token keyword" style="color:#00009f">WHERE</span><span class="token plain"> b </span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">5</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>这条查询可以将t表中的所有数据读取上来，然后根据条件过滤，然后再投影，最后拿到 列（a）的数据。也可以先进行列剪裁，只读取列a、b的数据，然后根据过滤条件进行过滤，最后输出数据。列裁剪可以避免消耗一些不必要的资源。</p>
+</li>
+<li>
+<p>最大最小值消除</p>
+<p>有以下查询语句：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> </span><span class="token function" style="color:#d73a49">min</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">a</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> t</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>这句话可以转换成：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> a </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> t </span><span class="token keyword" style="color:#00009f">ORDER</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">BY</span><span class="token plain"> a </span><span class="token keyword" style="color:#00009f">DESC</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">LIMIT</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">1</span><span class="token punctuation" style="color:#393A34">;</span><span class="token plain"> </span><br></span></code></pre></div></div>
+<p>这样查询的效率要比做聚合要高。</p>
+</li>
+<li>
+<p>投影消除</p>
+<p>假设表t和tt均有a、b、c、d四列。</p>
+<p>有以下查询语句：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> t1</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">a t2</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">b </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> t </span><span class="token keyword" style="color:#00009f">AS</span><span class="token plain"> t1 </span><span class="token keyword" style="color:#00009f">JOIN</span><span class="token plain"> </span><span class="token punctuation" style="color:#393A34">(</span><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> a</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> b</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> c </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> tt</span><span class="token punctuation" style="color:#393A34">)</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">AS</span><span class="token plain"> t2 </span><span class="token keyword" style="color:#00009f">ON</span><span class="token plain"> t1</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">a</span><span class="token operator" style="color:#393A34">=</span><span class="token plain">t2</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">a</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>此查询语句投影列中只需要表t的a列和表tt的b列，而join的右侧子查询的投影列存在a、b、c三列，c列在外层是不需要的，所以计划中会消除掉c列。</p>
+</li>
+<li>
+<p>谓词下推</p>
+<p>有以下查询语句：</p>
+<div class="language-sql codeBlockContainer_PXQd theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_hT68"><pre tabindex="0" class="prism-code language-sql codeBlock_IXTZ thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_wiwg"><span class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">SELECT</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">*</span><span class="token plain"> </span><span class="token keyword" style="color:#00009f">FROM</span><span class="token plain"> t</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> tt </span><span class="token keyword" style="color:#00009f">WHERE</span><span class="token plain"> t</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">a </span><span class="token operator" style="color:#393A34">&gt;</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">3</span><span class="token plain"> </span><span class="token operator" style="color:#393A34">AND</span><span class="token plain"> tt</span><span class="token punctuation" style="color:#393A34">.</span><span class="token plain">b </span><span class="token operator" style="color:#393A34">&lt;</span><span class="token plain"> </span><span class="token number" style="color:#36acaa">5</span><span class="token punctuation" style="color:#393A34">;</span><br></span></code></pre></div></div>
+<p>假设t、tt均有100条数据，如果先将t和tt做笛卡尔积在过滤就要处理10000条数据，如果能先做谓词条件过滤(将每张表的过滤条件下推到select计算中)，那么数据量可能会大量减少。例如符合t.a &gt; 3条件的t表数据有10条，符合tt.b &lt; 5的tt表数据有8条，先过滤之后再做笛卡尔积只需要处理80条。</p>
+<p>谓词下推就是将过滤条件尽量靠近叶子节点。</p>
+</li>
+</ul>
+<p>经过RBO优化过的计划会比未优化过的计划性能效率更高，性能更好，成本更低。</p>
+<p>至此RBO优化介绍完毕，KWDB还会对SQL进行更加深入的CBO优化和多模场景的计算优化，请参考3、4章节。</p>
+<h2 class="anchor anchorWithStickyNavbar_S6oC" id="3-针对多模计算的优化">3 针对多模计算的优化<a href="#3-针对多模计算的优化" class="hash-link" aria-label="3 针对多模计算的优化的直接链接" title="3 针对多模计算的优化的直接链接">​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="31-kwdb多模计算本地化">3.1 KWDB多模计算本地化<a href="#31-kwdb多模计算本地化" class="hash-link" aria-label="3.1 KWDB多模计算本地化的直接链接" title="3.1 KWDB多模计算本地化的直接链接">​</a></h3>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="311-计算本地化概念">3.1.1 计算本地化概念<a href="#311-计算本地化概念" class="hash-link" aria-label="3.1.1 计算本地化概念的直接链接" title="3.1.1 计算本地化概念的直接链接">​</a></h4>
+<p>将query尽可能的放到时序引擎内去执行，这样可以减少数据传输，使数据尽可能的本地处理，提高查询的效率，这个找到时序引擎支持的最大的计划树的过程我们称之为计算本地化。</p>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="312-计算本地化的基本思路">3.1.2 计算本地化的基本思路<a href="#312-计算本地化的基本思路" class="hash-link" aria-label="3.1.2 计算本地化的基本思路的直接链接" title="3.1.2 计算本地化的基本思路的直接链接">​</a></h4>
+<p>query语句会被语法解析器解析为一颗树状结构的表达式，每一层表达式后续会转换为对应的算子由执行引擎执行。这个树状结构我们称之为 memo tree。在构建memo tree的过程中，需要对一些标量表达式进行评估和处理，如filter。 在memo tree基本构建完毕后，需要自顶向下的遍历这棵树，找出可以在时序引擎本地化计算的最大树。</p>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="313-每层针对计算本地化的处理">3.1.3 每层针对计算本地化的处理<a href="#313-每层针对计算本地化的处理" class="hash-link" aria-label="3.1.3 每层针对计算本地化的处理的直接链接" title="3.1.3 每层针对计算本地化的处理的直接链接">​</a></h4>
+<ol>
+<li>
+<p>对于 scan 层</p>
+<ul>
+<li>时序的 scan 全部在时序引擎执行计算本地化</li>
+</ul>
+</li>
+<li>
+<p>对于 filter 层</p>
+<ul>
+<li>需要对 filter 表达式进行拆解，判断哪些 filter 条件能实现计算本地化和哪些 filter 条件不能实现计算本地化并记录</li>
+<li>对记录结果进行一系列运算获取最终需要进行计算本地化的 filter 集合</li>
+<li>将能实现计算本地化的部分作为一个过滤算子放到时序引擎执行</li>
+<li>关系引擎根据不能实现计算本地化的部分重新构建新的 filter 层</li>
+<li>关系接收时序 filter 处理后的数据并再做过滤</li>
+</ul>
+<p>这样就完成了 filter 层的计算本地化处理</p>
+</li>
+<li>
+<p>对于 group 层</p>
+<p>GroupBy、ScalarGroupBy、Distinct 逻辑一致。下面先解释一下这三个名词：</p>
+<ul>
+<li>GroupBy：查询有聚合函数且有 group by</li>
+<li>ScalarGroupBy：查询只有聚合函数，没有 group by</li>
+<li>DistinctOnExpr：查询只有 group by，没有聚合函数</li>
+</ul>
+<p>group 层的本地化计算需要判断以下两处能否实现计算本地化：</p>
+<ul>
+<li>group by：检查 group by 列能否实现计算本地化</li>
+<li>聚合：检查聚合函数、聚合函数输入(包括类型、个数等)以及聚合函数运算等能否实现计算本地化</li>
+</ul>
+<p>特殊说明：</p>
+<ul>
+<li>如果是 ScalarGroupBy 层则不需要检查条件 1</li>
+<li>如果是 DistinctOnExpr 层则不需要检查条件 2</li>
+<li>本层不能拆分，有一处检查不能本地化计算则 group by 层不能本地化计算</li>
+</ul>
+</li>
+<li>
+<p>对于 projection 层</p>
+<ul>
+<li>处理 projection 时，会检查本层 projection 操作能否实现计算本地化</li>
+<li>如投影列不能出现 int + float，否则时序引擎不支持等</li>
+<li>只要出现不能进行计算本地化的情况，则本层不做结算本地化处理</li>
+</ul>
+</li>
+<li>
+<p>对于 limit 层</p>
+<ul>
+<li>limit 层可以在时序引擎使用计算本地化处理</li>
+<li>多结点时需要网关结点二次 limit 汇聚结果</li>
+</ul>
+</li>
+<li>
+<p>其他层</p>
+<ul>
+<li>其他算子暂未实现，如 join 表达式还未在时序引擎支持结算本地化</li>
+<li>后续版本逐渐支持</li>
+</ul>
+</li>
+</ol>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="314-计算本地化控制">3.1.4 计算本地化控制<a href="#314-计算本地化控制" class="hash-link" aria-label="3.1.4 计算本地化控制的直接链接" title="3.1.4 计算本地化控制的直接链接">​</a></h4>
+<p>我们希望通过一个灵活的、可调整的机制去控制各个层的计算本地化判断。下面介绍一个控制计算本地化的机制：本地化计算白名单。</p>
+<h5 class="anchor anchorWithStickyNavbar_S6oC" id="3141-本地化计算白名单">3.1.4.1 本地化计算白名单<a href="#3141-本地化计算白名单" class="hash-link" aria-label="3.1.4.1 本地化计算白名单的直接链接" title="3.1.4.1 本地化计算白名单的直接链接">​</a></h5>
+<p>本地化计算白名单是一个用于控制表达式能否进行本地化计算的系统表。它记录了时序引擎支持的所有表达式，白名单包含以下元素：</p>
+<ul>
+<li>可本地化执行操作：表示这个表达式的操作符能否在时序引擎本地化计算</li>
+<li>参数数量：表示这个表达式的参数数量</li>
+<li>参数类型：表示这个表达式的参数类型，可以表示多个参数的类型，是一个数组</li>
+<li>可本地化计算位置：表示这个表达式在query中出现的位置</li>
+<li>默认是否开启：默认是否可以本地化计算，可手动变更</li>
+<li>支持类型：支持表达式的类型，如const、column、agg、bianary、compare</li>
+</ul>
+<p>下面是一个白名单的例子：</p>
+<table><thead><tr><th>可本地化计算操作符或函数</th><th>参数数量</th><th>参数类型</th><th>可本地化计算位置</th><th>默认是否开启</th><th>支持类型</th></tr></thead><tbody><tr><td>+</td><td>2</td><td>int;int</td><td>where</td><td>true</td><td>常量; 列类型</td></tr></tbody></table>
+<p>在这个例子中，白名单允许满足以下条件的&quot;+&quot;操作符表达式进行本地化计算：</p>
+<ol>
+<li>&quot;+&quot; 操作符的参数数量为2，即左右参数</li>
+<li>&quot;+&quot; 操作符的参数类型为：左参数类型为int，右参数类型为int</li>
+<li>&quot;+&quot; 操作符出现在where条件中</li>
+<li>&quot;+&quot; 操作符的结果为一个常量或列类型</li>
+</ol>
+<h5 class="anchor anchorWithStickyNavbar_S6oC" id="3142-利用白名单控制计算本地化">3.1.4.2 利用白名单控制计算本地化<a href="#3142-利用白名单控制计算本地化" class="hash-link" aria-label="3.1.4.2 利用白名单控制计算本地化的直接链接" title="3.1.4.2 利用白名单控制计算本地化的直接链接">​</a></h5>
+<p>下面介绍下如何判定这个表达式在白名单中。</p>
+<ol>
+<li>白名单中的每一行代表一个可本地化计算的表达式，根据表达式的操作符(或函数)名称、参数个数、参数类型做一个哈希编码（hash code）。</li>
+<li>将这个hash编码作为key，允许出现的位置、表达式的输出类型作为 value，放到一个map中。</li>
+<li>要检查某一层的表达式能否本地化计算时，先根据表达式的操作符、参数个数、参数类型做一个哈希编码，得到一个hash code。用这个hash code去map中取值。</li>
+<li>如果能取到值，再校验可以出现的位置和表达式的输出类型是否能本地化计算，这个信息存放于map的value中。</li>
+<li>按照上述步骤检查表达式，如果满足条件则说明白名单允许这个表达式进行本地化计算。</li>
+</ol>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="315-本地化计算判断举例说明">3.1.5 本地化计算判断举例说明<a href="#315-本地化计算判断举例说明" class="hash-link" aria-label="3.1.5 本地化计算判断举例说明的直接链接" title="3.1.5 本地化计算判断举例说明的直接链接">​</a></h4>
+<p>下面介绍一个例子判断计算本地化的过程。</p>
+<p>如 <code>select max(e1+e2) from d1.t1 where e1 &gt; 0 group by e1;</code> 其中 e1 列为 int 类型、e2 列为 float 类型。</p>
+<p>假设我们的白名单是这样的:</p>
+<table><thead><tr><th>可本地化计算操作符或函数</th><th>参数数量</th><th>参数类型</th><th>可本地化计算位置</th><th>默认是否开启</th><th>支持类型</th></tr></thead><tbody><tr><td>max</td><td>1</td><td>int</td><td>投影列</td><td>true</td><td>常量;列类型</td></tr><tr><td>+</td><td>2</td><td>int;float</td><td>所有位置</td><td>true</td><td>所有类型(包括Const、Column、Binary、Compare、Agg)</td></tr><tr><td>&gt;</td><td>2</td><td>int;int</td><td>where</td><td>true</td><td>所有类型</td></tr></tbody></table>
+<p>首先，这个query 生成的memo tree是这样的。</p>
+<p><img decoding="async" loading="lazy" alt="memo_tree" src="/dev/assets/images/memo_tree-6dba9f179f2f7bf5487351c5b039a266.jpg" width="1187" height="148" class="img_x6Wl"></p>
+<p>下图是这棵memo tree的本地化计算流程。</p>
+<p><img decoding="async" loading="lazy" alt="localization_process_flow" src="/dev/assets/images/localization_process_flow-050e5fdbb6c53b930f69bcba76b580ef.jpg" width="1185" height="910" class="img_x6Wl"></p>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="316-本地化计算主要逻辑入口">3.1.6 本地化计算主要逻辑入口<a href="#316-本地化计算主要逻辑入口" class="hash-link" aria-label="3.1.6 本地化计算主要逻辑入口的直接链接" title="3.1.6 本地化计算主要逻辑入口的直接链接">​</a></h4>
+<ol>
+<li>CheckWhiteListAndAddSynchronize 本地化计算逻辑的入口</li>
+<li>CheckWhiteListAndAddSynchronizeImp 本地化计算逻辑的主体，检查每一层算子能否本地化计算，其中包含检查每一层的函数</li>
+<li>CheckExprCanExecInTSEngine 判断本层表达式是否能由时序引擎本地化计算</li>
+<li>SetAddSynchronizer 给本层加并发标记。</li>
+</ol>
+<p>使用时序本地化计算的算子支持并发，所以找到可以本地化计算的最大树后，会加上可以并发的标记，以供时序引擎执行并发</p>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="32-统计信息和cbo">3.2 统计信息和CBO<a href="#32-统计信息和cbo" class="hash-link" aria-label="3.2 统计信息和CBO的直接链接" title="3.2 统计信息和CBO的直接链接">​</a></h3>
+<p>查询优化器部分采用基于成本的优化器，使用统计信息来评估不同查询计划的预期成本，并选择成本最低的执行计划。查询优化的主要流程如图所示：</p>
+<p><img decoding="async" loading="lazy" alt="whiteboard_exported_image_30" src="/dev/assets/images/whiteboard_exported_image (30)-46dded54f3c499df9bf34be8b8e2db79.png" width="1786" height="1420" class="img_x6Wl"></p>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="321-统计信息">3.2.1 统计信息<a href="#321-统计信息" class="hash-link" aria-label="3.2.1 统计信息的直接链接" title="3.2.1 统计信息的直接链接">​</a></h4>
+<p>统计信息作为查询优化器的数据源，统计信息的收集过程如图所示：</p>
+<p><img decoding="async" loading="lazy" alt="whiteboard_exported_image_31" src="/dev/assets/images/whiteboard_exported_image (31)-9446e3e1b45a57b009de2e32351985cf.png" width="1488" height="1224" class="img_x6Wl"></p>
+<ul>
+<li>TableReader: 表读取器，对表数据进行读取。</li>
+<li>TsSampler：样本采样器，统计表级统计信息，以及输入列的样本和基数。</li>
+<li>SampleAggregator: 采样汇总器，聚合来自多个采样器的结果，并将统计信息持久化存储。</li>
+</ul>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="322-开销模型">3.2.2 开销模型<a href="#322-开销模型" class="hash-link" aria-label="3.2.2 开销模型的直接链接" title="3.2.2 开销模型的直接链接">​</a></h4>
+<p>开销模型由不同种操作类型的开销计算公式函数组成，在优化器中的主要行为包括：</p>
+<ul>
+<li>对于传入的候选表达式，基于逻辑表达式树中的统计信息，对实际执行代价进行一个估计。</li>
+<li>将估计代价分配给对应的表达式中，如果候选表达式的成本低于memo中的其他任何表达式，则它将成为该组的最佳新表达式。</li>
+</ul>
+<p>Costor.go中以ComputeCost为主函数入口展开，调用了相应的对象和其对应的函数来估算出表达式的执行代价。</p>
+<h4 class="anchor anchorWithStickyNavbar_S6oC" id="323-计划列举">3.2.3 计划列举<a href="#323-计划列举" class="hash-link" aria-label="3.2.3 计划列举的直接链接" title="3.2.3 计划列举的直接链接">​</a></h4>
+<ul>
+<li>查询优化器采用Cascades框架，自顶向下进行优化</li>
+<li>在CBO初始阶段，将AST转化为一个规范化（normalized）计划</li>
+<li>计划列举依次枚举所有与规范化计划等价的表达式，并估算每个表达式的代价</li>
+<li>最后输出估算代价最小的计划，即最优计划</li>
+</ul>
+<p>以下举例说明：
+<img decoding="async" loading="lazy" alt="whiteboard_exported_image_34" src="/dev/assets/images/whiteboard_exported_image (34)-8354bdfa8ddf2217c4c532650efade9f.png" width="4504" height="1070" class="img_x6Wl"></p>
+<h3 class="anchor anchorWithStickyNavbar_S6oC" id="33-总结">3.3 总结<a href="#33-总结" class="hash-link" aria-label="3.3 总结的直接链接" title="3.3 总结的直接链接">​</a></h3>
+<p>本文概述了KWDB在查询优化和编译方面的宏观流程，以及结合多模引擎所做的延展和优化。KWDB项目本身仍在快速迭代中，欢迎大家到KWDB代码库中了解该领域最新的功能和创新。</p></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="文件选项卡"><a class="pagination-nav__link pagination-nav__link--prev" href="/dev/docs/design"><div class="pagination-nav__sublabel">上一页</div><div class="pagination-nav__label">设计文档</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/dev/docs/design/executor"><div class="pagination-nav__sublabel">下一页</div><div class="pagination-nav__label">KWDB SQL 执行</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_wFJl thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-概述" class="table-of-contents__link toc-highlight">1. 概述</a></li><li><a href="#2-kwdb查询编译和优化基础架构" class="table-of-contents__link toc-highlight">2 KWDB查询编译和优化基础架构</a><ul><li><a href="#21-词法解析" class="table-of-contents__link toc-highlight">2.1 词法解析</a></li><li><a href="#22-语法解析" class="table-of-contents__link toc-highlight">2.2 语法解析</a></li><li><a href="#23-语义解析" class="table-of-contents__link toc-highlight">2.3 语义解析</a></li><li><a href="#23-rbo-优化" class="table-of-contents__link toc-highlight">2.3 RBO 优化</a></li></ul></li><li><a href="#3-针对多模计算的优化" class="table-of-contents__link toc-highlight">3 针对多模计算的优化</a><ul><li><a href="#31-kwdb多模计算本地化" class="table-of-contents__link toc-highlight">3.1 KWDB多模计算本地化</a></li><li><a href="#32-统计信息和cbo" class="table-of-contents__link toc-highlight">3.2 统计信息和CBO</a></li><li><a href="#33-总结" class="table-of-contents__link toc-highlight">3.3 总结</a></li></ul></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">文档</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/dev/docs/quickstart/5M-quick-start">快速开始</a></li><li class="footer__item"><a class="footer__link-item" href="/dev/tutorial">教程</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">社区</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://kwdb.openatom.tech/" target="_blank" rel="noopener noreferrer" class="footer__link-item">KWDB 社区<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_y3KW"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://openatom.org/" target="_blank" rel="noopener noreferrer" class="footer__link-item">开放原子开源基金会<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_y3KW"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">更多</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://kwdb.atomgit.net/openrank/" target="_blank" rel="noopener noreferrer" class="footer__link-item">KWDB OpenRank Insight<svg width="13.5" height="13.5" aria-hidden="true" class="iconExternalLink_y3KW"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2025 OpenAtom KWDB Team. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>
