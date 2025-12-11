@@ -1,0 +1,9 @@
+{
+  "label": "开发环境配置",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "slug": "/development-environment",
+    "description": "配置 KWDB 开发环境"
+  }
+}

@@ -1,0 +1,1525 @@
+/**
+ * ===== 下载页面专用样式文件 =====
+ * 
+ * 文件用途：
+ * - 提供下载页面的完整样式定义
+ * - 包含下载卡片、版本信息、安装指南等组件样式
+ * - 支持亮色/暗色主题切换
+ * - 实现响应式设计，适配各种设备
+ * 
+ * 主要功能模块：
+ * 1. 页面头部区域 (Hero Section)
+ * 2. 下载统计信息展示
+ * 3. 下载卡片网格布局
+ * 4. 其他安装方式展示
+ * 5. 版本发布历史
+ * 6. 帮助和支持区域
+ * 7. 响应式设计适配
+ * 
+ * 依赖关系：
+ * - 依赖 terminal.css 中定义的 CSS 变量
+ * - 使用 Docusaurus 的 CodeBlock 组件样式
+ * - 集成 Inter 和 Fira Code 字体
+ * 
+ * 注意事项：
+ * - 所有颜色和间距使用 CSS 变量，确保主题一致性
+ * - 重要的交互元素都有悬停和激活状态
+ * - 移动端优先的响应式设计
+ * - 与教程页面样式保持统一
+ */
+
+/* ===== 页面根容器 ===== */
+/* 下载页面根容器 - 设置全局字体 */
+.download-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ===== 页面头部区域 (Hero Section) ===== */
+/* 下载页面头部区域 - 统一教程页面样式，包含标题和统计信息 */
+.download-hero {
+  background: linear-gradient(180deg, var(--terminal-bg-primary) 0%, var(--terminal-bg-secondary) 100%);
+  padding: var(--section-spacing) 0;
+  text-align: center;
+  border-bottom: 1px solid var(--terminal-border-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.download-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.download-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.download-hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  color: var(--terminal-accent-blue);
+  letter-spacing: -0.02em;
+  font-family: var(--terminal-font-family);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.download-hero-title .hero-icon {
+  width: 3rem;
+  height: 3rem;
+  color: var(--terminal-accent-blue);
+}
+
+.download-hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--terminal-text-secondary);
+  margin-bottom: var(--spacing-2xl);
+  line-height: 1.6;
+  font-family: var(--terminal-font-family);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== 下载统计信息展示 ===== */
+/* 统计信息容器 - 展示下载次数、版本数量等关键数据 */
+.download-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  font-family: 'Fira Code', monospace;
+}
+
+[data-theme='dark'] .stat-number {
+  color: #58a6ff;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.25rem;
+}
+
+[data-theme='dark'] .stat-label {
+  color: #8b949e;
+}
+
+/* ===== 章节标题样式 ===== */
+/* 通用章节标题 - 统一教程页面样式，覆盖 custom.css 中的样式 */
+.section-title {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: var(--section-spacing);
+  color: var(--terminal-text-primary);
+  font-family: var(--terminal-font-family);
+  /* 覆盖custom.css中的flex布局，确保对齐一致 */
+  display: block !important;
+  align-items: initial !important;
+  gap: initial !important;
+  position: static !important;
+  overflow: visible !important;
+}
+
+/* 移除custom.css中的伪元素效果，保持简洁样式 */
+.download-page .section-title::after {
+  display: none !important;
+}
+
+.download-page .section-title:hover::after {
+  display: none !important;
+}
+
+/* 确保下载页面中所有section-title具有完全一致的对齐和间距 */
+.download-releases .section-title,
+.download-support .section-title,
+.download-ecosystem .section-title {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-bottom: var(--section-spacing) !important;
+  margin-top: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* ===== 下载卡片网格布局 ===== */
+/* 下载卡片网格容器 - 响应式网格布局，自适应卡片数量 */
+.download-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-2xl);
+  margin-bottom: var(--section-spacing);
+}
+
+/* 下载卡片样式 - 统一教程页面样式，包含悬停效果和阴影 */
+.download-card {
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 16px;
+  padding: var(--spacing-2xl);
+  transition: all 0.3s ease;
+  box-shadow: var(--terminal-shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.download-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--terminal-shadow-lg);
+  border-color: var(--terminal-accent-blue);
+}
+
+/* 下载卡片头部 - 统一教程页面样式 */
+.download-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.download-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--terminal-accent-blue);
+  flex-shrink: 0;
+}
+
+.download-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-text-primary);
+  font-family: var(--terminal-font-family);
+}
+
+.download-card-desc {
+  color: var(--terminal-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* 版本标签 - 统一教程页面样式 */
+.download-version {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--terminal-bg-primary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: var(--terminal-text-secondary);
+  font-family: 'Fira Code', monospace;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* 下载卡片操作区 */
+.download-card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* 主下载按钮 - 统一教程页面样式 */
+.download-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--terminal-accent-blue);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.download-btn-primary:hover {
+  background: var(--terminal-accent-blue-hover);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  text-decoration: none;
+}
+
+/* 次要下载按钮 - 统一教程页面样式 */
+.download-btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid var(--terminal-border-primary);
+  color: var(--terminal-text-primary);
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.download-btn-secondary:hover {
+  border-color: var(--terminal-accent-blue);
+  color: var(--terminal-accent-blue);
+  background: var(--terminal-bg-primary);
+  text-decoration: none;
+}
+
+/* 筛选器和搜索栏 */
+.search-filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--terminal-bg-secondary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--terminal-border-primary);
+  /* Fix layout issues caused by global styles */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .search-filter-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+  display: block; /* Ensure block display */
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--terminal-text-secondary);
+  pointer-events: none; /* Prevent icon from blocking input clicks */
+  display: block;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border-radius: 8px;
+  border: 1px solid var(--terminal-border-primary);
+  background: var(--terminal-bg-primary);
+  color: var(--terminal-text-primary);
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  height: auto; /* Reset height */
+  line-height: 1.5;
+  display: block;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--terminal-accent-blue);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--terminal-bg-primary);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--terminal-border-primary);
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--terminal-text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.filter-tab:hover {
+  color: var(--terminal-text-primary);
+}
+
+.filter-tab.active {
+  background: var(--terminal-bg-secondary);
+  color: var(--terminal-accent-blue);
+  box-shadow: var(--terminal-shadow-sm);
+}
+
+/* ===== 其他安装方式展示 ===== */
+.release-download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--terminal-accent-blue);
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.release-download-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.direct-download-btn:active::after,
+.platform-toggle:active::after,
+.release-download-btn:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .filter-tabs {
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+  
+  .filter-tab {
+    flex-shrink: 0;
+  }
+}
+.download-ecosystem {
+  padding: var(--section-spacing) 0;
+  background: var(--terminal-bg-secondary);
+  border-top: 1px solid var(--terminal-border-primary);
+}
+
+/* 生态工具子标题样式 */
+.ecosystem-subtitle {
+  text-align: left;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--terminal-text-primary);
+  border-left: 4px solid var(--terminal-accent-blue);
+  padding-left: 1rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--terminal-font-family);
+}
+
+.ecosystem-section + .ecosystem-section {
+  margin-top: 3rem;
+}
+
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-xl);
+  padding: 0 var(--spacing-md);
+}
+
+.ecosystem-card {
+  background: var(--terminal-bg-primary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 12px;
+  padding: var(--spacing-xl);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensure card fills grid cell */
+  min-height: 280px; /* Minimum height for consistency */
+}
+
+.ecosystem-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--terminal-shadow-md);
+  border-color: var(--terminal-accent-blue);
+}
+
+.ecosystem-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.ecosystem-icon-wrapper {
+  padding: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  color: var(--terminal-accent-blue);
+  flex-shrink: 0;
+}
+
+.ecosystem-info {
+  flex: 1;
+}
+
+.ecosystem-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--terminal-text-primary);
+  margin-bottom: 4px;
+  font-family: var(--terminal-font-family);
+}
+
+.ecosystem-meta {
+  display: flex;
+  gap: 8px;
+}
+
+.version-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--terminal-border-primary);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--terminal-text-secondary);
+  font-family: 'Fira Code', monospace;
+}
+
+.ecosystem-description {
+  color: var(--terminal-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-xl);
+  flex: 1;
+}
+
+.ecosystem-action {
+  margin-top: auto;
+}
+
+.direct-download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: var(--terminal-accent-blue);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.direct-download-btn:hover {
+  background: var(--terminal-accent-blue-hover);
+  color: white;
+  text-decoration: none;
+}
+
+/* 平台选择器 */
+.platform-selector {
+  position: relative;
+}
+
+.platform-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  color: var(--terminal-text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.platform-toggle:hover, .platform-toggle.active {
+  border-color: var(--terminal-accent-blue);
+  background: var(--terminal-accent-blue);
+  color: white;
+}
+
+.platform-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background: var(--terminal-bg-primary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  box-shadow: var(--terminal-shadow-lg);
+  overflow: hidden;
+  z-index: 10;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.platform-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  color: var(--terminal-text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--terminal-border-primary);
+  transition: background 0.2s ease;
+}
+
+.platform-item:last-child {
+  border-bottom: none;
+}
+
+.platform-item:hover {
+  background: var(--terminal-accent-blue);
+  color: white;
+  text-decoration: none;
+}
+
+.platform-item:hover .file-type {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.file-type {
+  font-size: 0.75rem;
+  color: var(--terminal-text-secondary);
+  background: var(--terminal-border-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* 其他安装方式样式（原有） */
+.install-methods-container {
+  margin-top: 3rem;
+  padding-top: 3rem;
+  border-top: 1px dashed var(--terminal-border-primary);
+}
+
+.subsection-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--terminal-text-primary);
+  margin-bottom: 1.5rem;
+  font-family: var(--terminal-font-family);
+}
+
+.alternatives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.alternative-card {
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 16px;
+  padding: var(--spacing-xl);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.alternative-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--terminal-shadow-md);
+  border-color: var(--terminal-accent-blue);
+}
+
+.alternative-card.enterprise {
+  border-color: var(--terminal-accent-blue);
+  background: linear-gradient(to bottom right, var(--terminal-bg-secondary), rgba(59, 130, 246, 0.05));
+}
+
+.alternative-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.alternative-icon {
+  padding: 12px;
+  background: var(--terminal-bg-primary);
+  border-radius: 12px;
+  color: var(--terminal-accent-blue);
+  border: 1px solid var(--terminal-border-primary);
+}
+
+.alternative-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-text-primary);
+  font-family: var(--terminal-font-family);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.enterprise-badge {
+  font-size: 0.75rem;
+  background: var(--terminal-accent-blue);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.alternative-description {
+  color: var(--terminal-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.command-block {
+  margin-bottom: var(--spacing-lg);
+  flex: 1;
+}
+
+/* 调整代码块样式 */
+.command-block :global(pre) {
+  margin: 0;
+  border-radius: 8px;
+  background: #1e1e1e !important;
+  border: 1px solid #333;
+}
+
+.alternative-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--terminal-accent-blue);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: gap 0.2s ease;
+}
+
+.alternative-link:hover {
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+/* 版本发布样式 */
+.download-releases {
+  padding: var(--section-spacing) 0;
+  background: var(--terminal-bg-primary);
+}
+
+/* 合并后的版本卡片样式 */
+.merged-release-card {
+  display: flex;
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 16px;
+  /* overflow: hidden; Removed to allow tooltips to show */
+  box-shadow: var(--terminal-shadow-sm);
+  min-height: 350px;
+}
+
+/* 侧边栏样式 */
+.release-sidebar {
+  width: 240px;
+  background: var(--terminal-bg-primary);
+  border-right: 1px solid var(--terminal-border-primary);
+  padding: var(--spacing-lg);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+
+.sidebar-title {
+  font-size: 0.9rem;
+  color: var(--terminal-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+}
+
+.version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.version-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.version-item:hover {
+  background: var(--terminal-bg-secondary);
+}
+
+.version-item.active {
+  background: var(--terminal-bg-secondary);
+  border-color: var(--terminal-border-primary);
+  box-shadow: var(--terminal-shadow-sm);
+}
+
+.version-number {
+  font-family: 'Fira Code', monospace;
+  font-weight: 500;
+  color: var(--terminal-text-primary);
+}
+
+.version-item.active .version-number {
+  color: var(--terminal-accent-blue);
+  font-weight: 700;
+}
+
+.version-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.version-dot.stable {
+  background: #10b981;
+}
+
+.version-dot.beta {
+  background: #f59e0b;
+}
+
+.more-releases-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: var(--spacing-md);
+  padding: 8px;
+  font-size: 0.8rem;
+  color: var(--terminal-text-secondary);
+  text-decoration: none;
+  border: 1px dashed var(--terminal-border-primary);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.more-releases-btn:hover {
+  color: var(--terminal-accent-blue);
+  border-color: var(--terminal-accent-blue);
+  background: var(--terminal-bg-secondary);
+  text-decoration: none;
+}
+
+/* 内容详情区样式 */
+.release-detail {
+  flex: 1;
+  padding: var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  /* No border radius needed here as it's transparent/inherited or handled by sidebar */
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--terminal-border-primary);
+}
+
+.detail-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.detail-version {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--terminal-text-primary);
+  font-family: 'Fira Code', monospace;
+  margin: 0;
+}
+
+.detail-date {
+  color: var(--terminal-text-secondary);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.detail-content {
+  flex: 1;
+}
+
+.detail-content h4 {
+  font-size: 1rem;
+  color: var(--terminal-text-primary);
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+}
+
+.detail-content ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--terminal-text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.detail-content li {
+  margin-bottom: 8px;
+}
+
+.detail-actions {
+  margin-top: var(--spacing-2xl);
+}
+
+.release-download-btn.large {
+  width: auto;
+  display: inline-flex;
+  padding: 12px 24px;
+  font-size: 1rem;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .merged-release-card {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .release-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--terminal-border-primary);
+    padding: var(--spacing-md);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 0;
+  }
+
+  .version-list {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .version-item {
+    min-width: 120px;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .release-download-btn.large {
+    width: 100%;
+  }
+}
+
+.releases-footer {
+  text-align: center;
+  margin-top: var(--spacing-xl);
+}
+
+.releases-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--terminal-text-secondary);
+  transition: color 0.2s ease;
+}
+
+.releases-link:hover {
+  color: var(--terminal-accent-blue);
+  text-decoration: none;
+}
+
+/* 帮助和支持样式 */
+.download-support {
+  padding: var(--section-spacing) 0;
+  background: var(--terminal-bg-secondary);
+  border-top: 1px solid var(--terminal-border-primary);
+}
+
+.support-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.support-description {
+  color: var(--terminal-text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: var(--spacing-xl);
+}
+
+.support-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.support-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--terminal-bg-primary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 8px;
+  color: var(--terminal-text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.support-link:hover {
+  border-color: var(--terminal-accent-blue);
+  background: var(--terminal-accent-blue);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .download-hero-title {
+    font-size: 2rem;
+    flex-direction: column;
+  }
+  
+  .download-stats {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.75rem;
+  }
+  
+  .subsection-title {
+    font-size: 1.25rem;
+  }
+  
+  .alternatives-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ecosystem-card-header {
+    flex-direction: column;
+  }
+  
+  .ecosystem-meta {
+    flex-wrap: wrap;
+  }
+}
+
+/* ===== 新增下载资源列表样式 ===== */
+.download-assets-list h4 {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--terminal-text-secondary);
+}
+
+.assets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.asset-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--terminal-text-primary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  /* overflow: hidden; Remove to allow tooltip to show */
+  position: relative; /* Context for tooltip */
+}
+
+.asset-download-btn:hover {
+  border-color: var(--terminal-accent-blue);
+  background: rgba(59, 130, 246, 0.1);
+  text-decoration: none;
+  z-index: 10; /* Bring to front */
+}
+
+/* Custom Tooltip */
+.asset-download-btn:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  color: var(--terminal-text-primary);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+  z-index: 100;
+  box-shadow: var(--terminal-shadow-lg);
+  min-width: 200px;
+  max-width: 300px;
+  text-align: center;
+  margin-bottom: 8px;
+  font-family: 'Fira Code', monospace;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 0.2s ease forwards;
+}
+
+/* Tooltip Arrow */
+.asset-download-btn:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--terminal-border-primary);
+  margin-bottom: -4px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  animation: fadeIn 0.2s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, 4px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.asset-info {
+  flex: 1;
+  min-width: 0; /* Crucial for nested flex truncation */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.asset-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+}
+
+.asset-size {
+  font-size: 0.75rem;
+  color: var(--terminal-text-secondary);
+}
+
+/* ===== New Component Styles ===== */
+
+/* Sidebar Header & Refresh Button */
+.sidebar-header-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.refresh-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--terminal-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refresh-icon-btn:hover:not(:disabled) {
+  color: var(--terminal-accent-blue);
+  background: var(--terminal-bg-secondary);
+}
+
+.refresh-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Source Selector */
+.source-selector {
+  margin-bottom: var(--spacing-md);
+}
+
+.source-selector label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--terminal-text-secondary);
+  margin-bottom: 6px;
+}
+
+.source-tabs {
+  display: flex;
+  background: var(--terminal-bg-secondary);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--terminal-border-primary);
+  position: relative; /* Needed for sliding background */
+  z-index: 1;
+}
+
+/* Sliding Background */
+.source-tabs::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  background: var(--terminal-bg-primary);
+  border-radius: 6px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+  box-shadow: var(--terminal-shadow-sm);
+  /* Default position for left tab (Github) */
+  transform: translateX(0);
+}
+
+/* When Gitee is active (assuming it's the second child button) */
+/* Since we can't detect which button is active purely via CSS on the parent without a class on parent,
+   we will rely on a class 'active-right' on the parent, OR we use the sibling selector trick if possible.
+   However, React makes it easy to add a class to the parent.
+*/
+.source-tabs.active-gitee::before {
+  transform: translateX(100%);
+}
+
+.source-tab {
+  flex: 1;
+  border: none;
+  background: transparent; /* Remove background change */
+  color: var(--terminal-text-secondary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s ease; /* Only animate color */
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 2; /* Above the slider */
+}
+
+.source-tab.active {
+  /* background: var(--terminal-bg-primary); Removed in favor of slider */
+  color: var(--terminal-text-primary);
+  /* box-shadow: var(--terminal-shadow-sm); Removed */
+}
+
+.source-tab:hover:not(.active) {
+  color: var(--terminal-text-primary);
+}
+
+/* Version List Animation */
+.version-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.version-list.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.version-list.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.version-list.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.version-list.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Detail Content Wrapper & Expand/Collapse */
+.detail-content-wrapper {
+  position: relative;
+  margin-bottom: var(--spacing-xl);
+}
+
+.detail-content {
+  max-height: 200px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.detail-content-wrapper.expanded .detail-content {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.detail-expand-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--terminal-bg-secondary));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0;
+  pointer-events: none;
+}
+
+.detail-content-wrapper.expanded .detail-expand-overlay {
+  position: static;
+  height: auto;
+  background: none;
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--terminal-border-primary);
+}
+
+.expand-btn {
+  pointer-events: auto;
+  background: var(--terminal-bg-primary);
+  border: 1px solid var(--terminal-border-primary);
+  color: var(--terminal-accent-blue);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: var(--terminal-shadow-sm);
+}
+
+.expand-btn:hover {
+  background: var(--terminal-accent-blue);
+  color: white;
+  border-color: var(--terminal-accent-blue);
+}
+
+/* Markdown Body Styles */
+.markdown-body {
+  color: var(--terminal-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Handle line breaks properly */
+.markdown-body p {
+  margin-bottom: 1.2em;
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+}
+
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+  color: var(--terminal-text-primary);
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.markdown-body h1 { font-size: 1.5rem; border-bottom: 1px solid var(--terminal-border-primary); padding-bottom: 0.3em; }
+.markdown-body h2 { font-size: 1.3rem; border-bottom: 1px solid var(--terminal-border-primary); padding-bottom: 0.3em; }
+.markdown-body h3 { font-size: 1.1rem; }
+.markdown-body h4 { font-size: 1rem; }
+
+.markdown-body ul, .markdown-body ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.2em;
+}
+
+.markdown-body li {
+  margin-bottom: 0.5em;
+}
+
+.markdown-body blockquote {
+  margin: 0 0 1.2em 0;
+  padding: 0.5em 1em;
+  color: var(--terminal-text-secondary);
+  border-left: 4px solid var(--terminal-border-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.markdown-body code {
+  background: rgba(110, 118, 129, 0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85em;
+  color: var(--terminal-text-primary);
+}
+
+.markdown-body pre {
+  background: var(--terminal-bg-primary);
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 1.2em;
+  border: 1px solid var(--terminal-border-primary);
+}
+
+.markdown-body pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  border-radius: 0;
+}
+
+.markdown-body a {
+  color: var(--terminal-accent-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--terminal-border-primary);
+  margin: 1em 0;
+}
+
+.markdown-body hr {
+  height: 1px;
+  padding: 0;
+  margin: 1.5em 0;
+  background-color: var(--terminal-border-primary);
+  border: 0;
+}
+
+.markdown-body table {
+  width: 100%;
+  margin-bottom: 1.2em;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body th, .markdown-body td {
+  padding: 6px 13px;
+  border: 1px solid var(--terminal-border-primary);
+}
+
+.markdown-body th {
+  font-weight: 600;
+  background: var(--terminal-bg-primary);
+}
+
+.markdown-body strong {
+  font-weight: 600;
+  color: var(--terminal-text-primary);
+}
+
+/* Release Type Badge */
+.release-type {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.release-type.stable {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.release-type.beta, .release-type.rc {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}

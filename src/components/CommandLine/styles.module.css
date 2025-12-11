@@ -1,0 +1,58 @@
+/* CommandLine 组件样式 */
+.commandLine {
+  display: flex;
+  align-items: center;
+  font-family: var(--terminal-font-family);
+  font-size: var(--terminal-font-size-lg);
+  color: var(--terminal-text-primary);
+  background: transparent;
+  padding: var(--terminal-spacing-sm) 0;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+.prompt {
+  color: var(--terminal-accent-blue);
+  margin-right: var(--terminal-spacing-sm);
+  font-weight: bold;
+  user-select: none;
+}
+
+.command {
+  color: var(--terminal-text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  transition: color 0.3s ease;
+}
+
+.cursor {
+  color: var(--terminal-accent-blue);
+  font-weight: bold;
+  margin-left: 2px;
+  transition: opacity 0.1s ease;
+}
+
+.cursor.visible {
+  opacity: 1;
+}
+
+.cursor.hidden {
+  opacity: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .commandLine {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .commandLine {
+    font-size: 12px;
+  }
+  
+  .prompt {
+    margin-right: 6px;
+  }
+}

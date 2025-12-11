@@ -1,0 +1,190 @@
+/* Terminal 组件样式 */
+.terminal {
+  background: var(--terminal-bg-primary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: var(--terminal-radius-md);
+  font-family: var(--terminal-font-family);
+  font-size: var(--terminal-font-size-base);
+  color: var(--terminal-text-primary);
+  overflow: hidden;
+  box-shadow: var(--terminal-shadow-lg);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.terminalHeader {
+  background: var(--terminal-bg-secondary);
+  padding: var(--terminal-spacing-sm) var(--terminal-spacing-md);
+  border-bottom: 1px solid var(--terminal-border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.terminalButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.closeButton,
+.minimizeButton,
+.maximizeButton {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.closeButton {
+  background: #ff5f56;
+}
+
+.minimizeButton {
+  background: #ffbd2e;
+}
+
+.maximizeButton {
+  background: #27ca3f;
+}
+
+.terminalTitle {
+  font-size: var(--terminal-font-size-sm);
+  color: var(--terminal-text-secondary);
+  font-weight: 500;
+}
+
+.terminalBody {
+  padding: var(--terminal-spacing-md);
+  height: calc(100% - 45px);
+  overflow-y: auto;
+  background: var(--terminal-bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+.terminalLine {
+  margin-bottom: 4px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.inputLine {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.prompt {
+  color: var(--terminal-accent-blue);
+  margin-right: var(--terminal-spacing-sm);
+  font-weight: bold;
+}
+
+.terminalInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--terminal-text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  flex: 1;
+  caret-color: var(--terminal-accent-blue);
+  transition: color 0.3s ease;
+}
+
+.terminalInput::placeholder {
+  color: var(--terminal-text-muted);
+}
+
+.terminalInput:disabled {
+  opacity: 0.6;
+}
+
+.cursor {
+  color: var(--terminal-accent-blue);
+  animation: blink 1s infinite;
+  margin-left: 4px;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* 滚动条样式 */
+.terminalBody::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminalBody::-webkit-scrollbar-track {
+  background: var(--terminal-bg-secondary);
+}
+
+.terminalBody::-webkit-scrollbar-thumb {
+  background: var(--terminal-border-primary);
+  border-radius: var(--terminal-radius-sm);
+}
+
+.terminalBody::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-text-muted);
+}
+
+/* ASCII Logo 美化样式 */
+.asciiLogo {
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  color: var(--terminal-accent-blue);
+  position: relative;
+}
+
+
+
+/* ASCII Logo 容器样式 */
+.asciiLogoContainer {
+  margin: var(--terminal-spacing-md) 0;
+  text-align: center;
+  position: relative;
+}
+
+
+
+/* 欢迎文本样式 */
+.welcomeText {
+  color: var(--terminal-text-secondary);
+  font-style: italic;
+  margin-top: var(--terminal-spacing-sm);
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+/* 淡入向上动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .terminal {
+    font-size: 12px;
+  }
+  
+  .terminalBody {
+    padding: 12px;
+  }
+  
+  .terminalHeader {
+    padding: 6px 12px;
+  }
+}

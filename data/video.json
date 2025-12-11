@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "category": "开放原子大赛",
+    "bvid": "BV1DhYhzMEfK",
+    "title": "【KWDB 核心贡献挑战赛】赛前培训 第1期",
+    "description": "本期直播将带你从0到1了解赛事，并深入解析赛题，展示初赛示例文档及评分维度，助力大家高效开启初赛准备！"
+  },
+  {
+    "id": 1,
+    "category": "开放原子大赛",
+    "bvid": "BV18Ha8zaEk2",
+    "title": "【KWDB 核心贡献挑战赛】赛前培训 第2期",
+    "description": "深入讲解【开发调试环境】,带你全面搞懂环境准备与各注意事项。"
+  },
+  {
+    "id": 2,
+    "category": "教程指南",
+    "bvid": "BV1M36gYmEnz",
+    "title": "如何快速获取 KWDB 安装包",
+    "description": ""
+  },
+  {
+    "id": 3,
+    "category": "教程指南",
+    "bvid": "BV1m36gY2E6U",
+    "title": "KWDB 二进制（裸机）单机部署",
+    "description": ""
+  },
+  {
+    "id": 4,
+    "category": "教程指南",
+    "bvid": "BV1bg6gYEE5c",
+    "title": "KWDB 二进制集群部署",
+    "description": ""
+  },
+  {
+    "id": 5,
+    "category": "教程指南",
+    "bvid": "BV1Ug6gY7EGt",
+    "title": "通过 KDC 连接 KWDB 数据库集群",
+    "description": ""
+  },
+  {
+    "id": 6,
+    "category": "教程指南",
+    "bvid": "BV1mg6gY7Eyk",
+    "title": "通过 JDBC 连接数据库集群",
+    "description": ""
+  },
+  {
+    "id": 7,
+    "category": "教程指南",
+    "bvid": "BV1pTdgY5Ezn",
+    "title": "通过 Docker 快速编译 KWDB",
+    "description": ""
+  },
+  {
+    "id": 8,
+    "category": "教程指南",
+    "bvid": "BV1GqgSzqEHV",
+    "title": "kwdb-tsbs 工具时序性能测试",
+    "description": ""
+  },
+  {
+    "id": 10,
+    "category": "教程指南",
+    "bvid": "BV19ouYzREYH",
+    "title": "揭秘 KWDB 时序引擎核心能力-存储与读写",
+    "description": "KWDB 时序引擎核心能力——存储与读写"
+  },
+  {
+    "id": 11,
+    "category": "教程指南",
+    "bvid": "BV13ytKzREcp",
+    "title": "KWDB 分布式架构探究——数据分布与特性",
+    "description": "KWDB 分布式架构探究——数据分布与特性"
+  }
+]

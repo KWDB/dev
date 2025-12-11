@@ -1,0 +1,58 @@
+[
+  {
+    "id": "liu-pengcheng",
+    "name": "刘鹏程",
+    "title": "三笠",
+    "photoFile": "刘鹏程 三笠.png",
+    "description": "Oracle ACE、墨天轮社区 MVP、CSDN 全站Top 50，活跃于各大技术社区论坛，全网粉丝 20w+。公众号 “Lucifer三思而后行”、“DBA学习之路” 主理人。"
+  },
+  {
+    "id": "ma-shunhua",
+    "name": "马顺华",
+    "title": "ShunWah",
+    "photoFile": "马顺华 ShunWah.png",
+    "description": "墨天轮社区MVP，原创技术文章常年被墨天轮、CSDN、ITPUB等平台首页推荐。公众号 “顺华星辰运维栈”主理人, “KWDB 创作者计划”首届社区征文“卓越奖”得主。"
+  },
+  {
+    "id": "shi-jiawei",
+    "name": "施嘉伟",
+    "title": "院长",
+    "photoFile": "施嘉伟 院长.png",
+    "description": "Oracle ACE Pro、PostgreSQL ACE，ITPUB认证专家，多家社区与高校的技术顾问和实践导师。公众号“Digital Observer”主理人。"
+  },
+  {
+    "id": "wang-dingding",
+    "name": "王丁丁",
+    "title": "邦德",
+    "photoFile": "王丁丁 邦德.png",
+    "description": "Oracle ACE，PostgreSQL ACE，BOE工业互联网数据库专家，中国DBA联盟(ACDU)成员，全网粉丝10w+。公众号“IT邦德”主理人。"
+  },
+  {
+    "id": "xue-xiaogang",
+    "name": "薛晓刚",
+    "title": "首席",
+    "photoFile": "薛晓刚 首席.png",
+    "description": "Oracle ACE-Pro，PostgreSQL ACE，CCF数据库专委会执行委员，信通院创新实验室成员单位专家，《DBA实战手记》作者。ITPUB核心专家、墨天轮社区MVP。公众号“四海内皆兄弟”主理人。"
+  },
+  {
+    "id": "xu-xiaoqiang",
+    "name": "徐小强",
+    "title": "JiekeXu",
+    "photoFile": "徐小强 JiekeXu.png",
+    "description": "Oracle ACE，拥有 OCP/OCM 认证证书、MySQL OCP 证书，国产数据库爱好者。公众号 “JiekeXu DBA之路” 主理人。"
+  },
+  {
+    "id": "yin-haiwen",
+    "name": "尹海文",
+    "title": "总监",
+    "photoFile": "尹海文 总监.png",
+    "description": "Oracle ACE Pro、PostgreSQL ACE、墨天轮社区MVP、年度“墨力之星”得主，ITPUB认证专家。公众号 “胖头鱼的鱼缸”主理人。"
+  },
+  {
+    "id": "yan-shaoan",
+    "name": "严少安",
+    "title": "所长",
+    "photoFile": "严少安 所长.png",
+    "description": "Oracle ACE，PostgreSQL ACE，持有 KWCA（KaiwuDB Certified Associate） 认证。公众号 “少安事务所”主理人，KWDB 创作者计划”首届社区征文“卓越奖”得主。"
+  }
+]

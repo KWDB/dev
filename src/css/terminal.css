@@ -1,0 +1,532 @@
+/* ===== 字体导入 ===== */
+/* 导入 Fira Code 编程字体，支持多种字重 */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+/* CSS 变量定义 - 深色模式默认 */
+:root {
+  /* 终端颜色主题 */
+  --terminal-bg-primary: #0d1117;
+  --terminal-bg-secondary: #161b22;
+  --terminal-bg-tertiary: #21262d;
+
+  --terminal-text-primary: #c9d1d9;
+  --terminal-text-secondary: #8b949e;
+  --terminal-text-muted: #6e7681;
+
+  --terminal-accent-blue: #58a6ff;
+  --terminal-accent-blue-hover: #1f6feb;
+  --terminal-accent-green: #3fb950;
+  --terminal-accent-red: #f85149;
+  --terminal-accent-yellow: #d29922;
+  --terminal-accent-purple: #a5a5ff;
+  --terminal-accent-write: #ffffff;
+
+  --terminal-border-primary: #30363d;
+  --terminal-border-secondary: #21262d;
+
+  /* 终端字体 */
+  --terminal-font-family: 'Fira Code', 'Monaco', 'Consolas', 'Liberation Mono', monospace;
+  --terminal-font-size-sm: 12px;
+  --terminal-font-size-base: 14px;
+  --terminal-font-size-lg: 16px;
+  --terminal-font-size-xl: 18px;
+
+  /* 间距 */
+  --terminal-spacing-xs: 4px;
+  --terminal-spacing-sm: 8px;
+  --terminal-spacing-md: 16px;
+  --terminal-spacing-lg: 24px;
+  --terminal-spacing-xl: 32px;
+
+  /* 阴影 */
+  --terminal-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --terminal-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --terminal-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== CSS 变量系统 ===== */
+
+/* ----- 深色模式主题变量 ----- */
+/* 深色模式下的完整颜色和样式系统定义 */
+[data-theme='dark'] {
+  /* 终端颜色主题 - 深色模式背景色系 */
+  --terminal-bg-primary: #0d1117;
+  --terminal-bg-secondary: #161b22;
+  --terminal-bg-tertiary: #21262d;
+
+  /* 文本颜色系统 - 深色模式下的文本层次 */
+  --terminal-text-primary: #c9d1d9;
+  --terminal-text-secondary: #8b949e;
+  --terminal-text-muted: #6e7681;
+
+  /* 强调色系统 - 用于交互元素和状态指示 */
+  --terminal-accent-blue: #58a6ff;
+  --terminal-accent-blue-hover: #1f6feb;
+  --terminal-accent-green: #3fb950;
+  --terminal-accent-red: #f85149;
+  --terminal-accent-yellow: #d29922;
+  --terminal-accent-purple: #a5a5ff;
+
+  /* 边框颜色系统 - 用于分割线和组件边框 */
+  --terminal-border-primary: #30363d;
+  --terminal-border-secondary: #21262d;
+
+  /* 字体系统 - 终端风格字体配置 */
+  --terminal-font-family: 'Fira Code', 'Monaco', 'Consolas', 'Liberation Mono', monospace;
+  --terminal-font-size-sm: 12px;
+  --terminal-font-size-base: 14px;
+  --terminal-font-size-lg: 16px;
+  --terminal-font-size-xl: 18px;
+
+  /* 间距系统 - 统一的空间布局规范 */
+  --terminal-spacing-xs: 4px;
+  --terminal-spacing-sm: 8px;
+  --terminal-spacing-md: 16px;
+  --terminal-spacing-lg: 24px;
+  --terminal-spacing-xl: 32px;
+
+  /* 阴影系统 - 深度和层次效果 */
+  --terminal-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --terminal-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --terminal-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ----- 亮色模式主题变量 ----- */
+/* 亮色模式下的完整颜色和样式系统定义 */
+[data-theme='light'] {
+  /* 终端颜色主题 - 亮色模式背景色系 */
+  --terminal-bg-primary: #ffffff;
+  --terminal-bg-secondary: #f6f8fa;
+  --terminal-bg-tertiary: #eaeef2;
+
+  /* 文本颜色系统 - 亮色模式下的文本层次 */
+  --terminal-text-primary: #24292f;
+  --terminal-text-secondary: #656d76;
+  --terminal-text-muted: #8c959f;
+
+  /* 强调色系统 - 用于交互元素和状态指示 */
+  --terminal-accent-blue: #0969da;
+  --terminal-accent-blue-hover: #0550ae;
+  --terminal-accent-green: #1a7f37;
+  --terminal-accent-red: #cf222e;
+  --terminal-accent-yellow: #bf8700;
+  --terminal-accent-purple: #8250df;
+
+  /* 边框颜色系统 - 用于分割线和组件边框 */
+  --terminal-border-primary: #d0d7de;
+  --terminal-border-secondary: #eaeef2;
+
+  /* 阴影系统 - 深度和层次效果 */
+  --terminal-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --terminal-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --terminal-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+
+  /* 圆角系统 - 统一的边框圆角规范 */
+  --terminal-radius-sm: 4px;
+  --terminal-radius-md: 6px;
+  --terminal-radius-lg: 8px;
+  --terminal-radius-xl: 12px;
+}
+
+/* ===== 全局样式重置和基础设置 ===== */
+
+/* ----- 全局重置 ----- */
+/* 重置所有元素的默认样式，确保一致性 */
+* {
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+html {
+  background-color: var(--terminal-bg-primary);
+  color: var(--terminal-text-primary);
+  font-family: var(--terminal-font-family);
+}
+
+body {
+  background-color: var(--terminal-bg-primary);
+  color: var(--terminal-text-primary);
+  font-family: var(--terminal-font-family);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* ----- 标题样式系统 ----- */
+/* 统一的标题样式，使用终端风格字体 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--terminal-accent-blue);
+  font-family: var(--terminal-font-family);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: var(--terminal-spacing-md);
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+/* ----- 链接样式 ----- */
+/* 终端风格的链接样式，支持悬停效果 */
+a {
+  color: var(--terminal-accent-blue);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+a:hover {
+  color: var(--terminal-accent-blue);
+  border-bottom-color: transparent;
+}
+
+a:active {
+  color: var(--terminal-accent-red);
+}
+
+/* ----- 代码样式 ----- */
+/* 内联代码和代码块的基础样式 */
+code {
+  background-color: var(--terminal-bg-secondary);
+  color: var(--terminal-accent-blue);
+  padding: 2px 6px;
+  border-radius: var(--terminal-radius-sm);
+  font-family: var(--terminal-font-family);
+  font-size: 0.9em;
+  border: 1px solid var(--terminal-border-primary);
+  transition: all 0.3s ease;
+}
+
+pre {
+  background-color: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: var(--terminal-radius-md);
+  padding: var(--terminal-spacing-md);
+  overflow-x: auto;
+  font-family: var(--terminal-font-family);
+  font-size: var(--terminal-font-size-base);
+  line-height: 1.5;
+  box-shadow: var(--terminal-shadow-sm);
+  transition: all 0.3s ease;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--terminal-text-primary);
+}
+
+/* ----- 引用样式 ----- */
+/* 引用块的样式，使用终端风格边框 */
+blockquote {
+  border-left: 4px solid var(--terminal-accent-blue);
+  background-color: rgba(88, 166, 255, 0.05);
+  padding: var(--terminal-spacing-md);
+  margin: var(--terminal-spacing-md) 0;
+  border-radius: 0 var(--terminal-radius-md) var(--terminal-radius-md) 0;
+  font-style: italic;
+}
+
+
+
+/* ===== 组件样式系统 ===== */
+
+/* ----- 按钮组件 ----- */
+/* 终端风格的按钮组件，支持主次样式和交互效果 */
+.terminal-button {
+  background-color: var(--terminal-bg-secondary);
+  color: var(--terminal-text-primary);
+  border: 1px solid var(--terminal-border-primary);
+  padding: var(--terminal-spacing-sm) var(--terminal-spacing-md);
+  border-radius: var(--terminal-radius-md);
+  font-family: var(--terminal-font-family);
+  font-size: var(--terminal-font-size-base);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.terminal-button:hover {
+  background-color: var(--terminal-accent-blue);
+  color: var(--terminal-bg-primary);
+  border-color: var(--terminal-accent-blue);
+  transform: translateY(-1px);
+}
+
+.terminal-button:active {
+  transform: translateY(0);
+}
+
+.terminal-button.primary {
+  background-color: var(--terminal-accent-blue);
+  color: var(--terminal-bg-primary);
+  border-color: var(--terminal-accent-blue);
+}
+
+.terminal-button.primary:hover {
+  background-color: var(--terminal-bg-secondary);
+  color: var(--terminal-text-primary);
+  border: 1px solid var(--terminal-border-primary);
+  padding: var(--terminal-spacing-sm) var(--terminal-spacing-md);
+  border-radius: var(--terminal-radius-md);
+  font-family: var(--terminal-font-family);
+}
+
+/* ----- 输入框组件 ----- */
+/* 终端风格的输入框组件，支持焦点状态和占位符样式 */
+.terminal-input {
+  background-color: var(--terminal-bg-secondary);
+  color: var(--terminal-text-primary);
+  border: 1px solid var(--terminal-border-primary);
+  padding: var(--terminal-spacing-sm) var(--terminal-spacing-md);
+  border-radius: var(--terminal-radius-md);
+  font-family: var(--terminal-font-family);
+  font-size: var(--terminal-font-size-base);
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.terminal-input:focus {
+  outline: none;
+  border-color: var(--terminal-accent-blue);
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+.terminal-input::placeholder {
+  color: var(--terminal-text-muted);
+}
+
+
+
+/* ===== 浏览器UI样式 ===== */
+
+/* ----- 滚动条样式 ----- */
+/* 自定义滚动条样式，保持终端风格一致性 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--terminal-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--terminal-border-primary);
+  border-radius: var(--terminal-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-text-muted);
+}
+
+/* ----- 文本选择样式 ----- */
+/* 自定义文本选择高亮样式 */
+::selection {
+  background-color: rgba(88, 166, 255, 0.3);
+  color: var(--terminal-text-primary);
+}
+
+::-moz-selection {
+  background-color: rgba(88, 166, 255, 0.3);
+  color: var(--terminal-text-primary);
+}
+
+/* ===== Hero 区域组件 ===== */
+
+/* ----- Hero 主容器 ----- */
+/* 页面顶部的Hero区域，支持渐变背景和毛玻璃效果 */
+.hero-section {
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.08) 0%,
+      rgba(147, 51, 234, 0.06) 50%,
+      rgba(236, 72, 153, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--terminal-radius-xl);
+  padding: var(--terminal-spacing-xl) var(--terminal-spacing-lg);
+  margin-bottom: var(--terminal-spacing-xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    0 2px 16px rgba(59, 130, 246, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hero区域在深色模式下的样式调整 */
+[data-theme='dark'] .hero-section {
+  background: linear-gradient(135deg,
+      rgba(15, 23, 42, 0.9) 0%,
+      rgba(30, 41, 59, 0.8) 50%,
+      rgba(51, 65, 85, 0.7) 100%);
+  border: 1px solid rgba(88, 166, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 2px 16px rgba(88, 166, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Hero区域的装饰性伪元素，添加光泽效果 */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.02) 50%,
+      transparent 70%);
+  pointer-events: none;
+}
+
+/* ----- Hero 内容容器 ----- */
+/* Hero区域的内容容器，控制最大宽度和居中对齐 */
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* ----- Hero 标题样式 ----- */
+/* Hero区域的主标题，支持图标和文字组合显示 */
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--terminal-accent-blue);
+  margin-bottom: var(--terminal-spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--terminal-spacing-md);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: var(--terminal-font-family);
+  line-height: 1.2;
+}
+
+/* Hero标题在深色模式下的颜色调整 */
+[data-theme='dark'] .hero-title {
+  color: var(--terminal-text-primary);
+}
+
+/* ----- Hero 描述文字 ----- */
+/* Hero区域的描述文字，提供详细说明 */
+.hero-description {
+  font-size: 1.2rem;
+  color: var(--terminal-text-secondary);
+  margin-bottom: var(--terminal-spacing-lg);
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: var(--terminal-font-family);
+}
+
+/* ----- Hero 图标样式 ----- */
+/* Hero区域的图标元素 */
+.hero-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--terminal-accent-blue);
+  flex-shrink: 0;
+}
+
+/* Hero图标在深色模式下的颜色调整 */
+[data-theme='dark'] .hero-icon {
+  color: var(--terminal-accent-blue);
+}
+
+/* ===== 响应式设计 ===== */
+
+/* ----- 平板设备适配 (768px以下) ----- */
+/* 针对平板设备的样式调整，优化布局和字体大小 */
+@media (max-width: 768px) {
+  :root {
+    --terminal-font-size-base: 13px;
+    --terminal-spacing-md: 12px;
+    --terminal-spacing-lg: 18px;
+  }
+
+  .hero-section {
+    padding: var(--terminal-spacing-lg) var(--terminal-spacing-md);
+  }
+
+  .hero-title {
+    font-size: 2rem;
+    flex-direction: column;
+    gap: var(--terminal-spacing-sm);
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+  }
+
+  .hero-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ----- 手机设备适配 (480px以下) ----- */
+/* 针对手机设备的样式调整，进一步优化小屏幕体验 */
+@media (max-width: 480px) {
+  :root {
+    --terminal-font-size-base: 12px;
+    --terminal-spacing-md: 10px;
+    --terminal-spacing-lg: 16px;
+  }
+
+  .hero-section {
+    padding: var(--terminal-spacing-md);
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .hero-icon {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+}

@@ -1,0 +1,600 @@
+/*
+ * ========================================
+ * 动画效果样式文件
+ * ========================================
+ * 
+ * 文件名：animations.css
+ * 用途：定义网站中所有动画效果和过渡效果
+ * 主要功能：
+ *   - 终端风格动画效果（打字机、光标闪烁、扫描线等）
+ *   - 通用动画效果（淡入、缩放、旋转、弹跳等）
+ *   - 特殊效果（矩阵雨、故障效果、呼吸效果等）
+ *   - 响应式动画控制和性能优化
+ * 
+ * 依赖关系：
+ *   - 使用CSS自定义属性（CSS Variables）
+ *   - 兼容亮色/暗色主题模式
+ *   - 支持移动设备动画优化
+ * 
+ * 注意事项：
+ *   - 所有动画都启用了硬件加速以提升性能
+ *   - 移动设备上会自动减少动画效果以节省电量
+ *   - 支持用户的减少动画偏好设置
+ */
+
+/* ========================================
+   CSS 变量定义 - 终端风格主题色彩
+   ======================================== */
+:root {
+  /* 终端主题色彩变量 */
+  --terminal-green: #00ff00;      /* 终端绿色 - 主要强调色 */
+  --terminal-blue: #0080ff;       /* 终端蓝色 - 链接和按钮 */
+  --terminal-amber: #ffbf00;      /* 终端琥珀色 - 警告状态 */
+  --terminal-red: #ff4444;        /* 终端红色 - 错误状态 */
+  --terminal-purple: #8a2be2;     /* 终端紫色 - 特殊元素 */
+  --terminal-cyan: #00ffff;       /* 终端青色 - 辅助色 */
+  --terminal-white: #ffffff;      /* 终端白色 - 文本色 */
+  --terminal-bg: #0a0a0a;         /* 终端背景色 - 深色 */
+  --terminal-bg-light: #1a1a1a;   /* 终端浅背景色 */
+  --terminal-shadow: rgba(0, 255, 0, 0.3);  /* 终端阴影效果 */
+  --terminal-glow: rgba(0, 255, 0, 0.5);    /* 终端发光效果 */
+  
+  /* 动画速度变量 */
+  --animation-speed-fast: 0.3s;     /* 快速动画 - 用于悬停效果 */
+  --animation-speed-normal: 0.6s;   /* 正常动画 - 用于页面过渡 */
+  --animation-speed-slow: 1.2s;     /* 慢速动画 - 用于加载效果 */
+  
+  /* 动画缓动函数 */
+  --animation-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);      /* 标准缓动 */
+  --animation-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);  /* 弹跳缓动 */
+}
+
+/* ========================================
+   亮色模式主题适配
+   ======================================== */
+
+[data-theme='light'] {
+  /* 亮色模式下的终端主题色彩调整 - 提高对比度和可读性 */
+  --terminal-green: #008000;      /* 深绿色 - 在亮色背景下更清晰 */
+  --terminal-blue: #0066cc;       /* 深蓝色 - 保持良好的对比度 */
+  --terminal-amber: #cc9900;      /* 深琥珀色 - 警告状态可见性 */
+  --terminal-red: #cc3333;        /* 深红色 - 错误状态突出显示 */
+  --terminal-purple: #7a1f7a;     /* 深紫色 - 特殊元素识别 */
+  --terminal-cyan: #006666;       /* 深青色 - 辅助色调整 */
+  --terminal-white: #333333;      /* 深灰色 - 亮色模式下的文本色 */
+  --terminal-bg: #f8f9fa;         /* 浅灰背景 - 亮色模式主背景 */
+  --terminal-bg-light: #ffffff;   /* 纯白背景 - 卡片和容器背景 */
+  --terminal-shadow: rgba(0, 128, 0, 0.2);  /* 减弱的阴影效果 */
+  --terminal-glow: rgba(0, 128, 0, 0.3);    /* 减弱的发光效果 */
+
+  /* 亮色模式下的扫描线效果调整 */
+  .terminal-scanline::before {
+    background: linear-gradient(90deg, 
+      transparent, 
+      var(--terminal-accent-blue), 
+      transparent
+    );
+    opacity: 0.6;
+  }
+  
+  /* 亮色模式下的故障效果调整 */
+  .terminal-glitch::before {
+    color: var(--terminal-accent-red);
+    opacity: 0.7;
+  }
+  
+  .terminal-glitch::after {
+    color: var(--terminal-accent-blue);
+    opacity: 0.7;
+  }
+  
+  /* 亮色模式下的代码块动画调整 */
+  .code-block-animated {
+    background: linear-gradient(
+      90deg,
+      var(--terminal-bg-secondary) 0%,
+      rgba(9, 105, 218, 0.08) 50%,
+      var(--terminal-bg-secondary) 100%
+    );
+  }
+}
+
+/* ========================================
+   打字机效果动画
+   ======================================== */
+
+/* 打字机文字逐字显示的关键帧动画 */
+@keyframes typewriter {
+  from {
+    width: 0;     /* 从零宽度开始 */
+  }
+  to {
+    width: 100%;  /* 扩展到完整宽度 */
+  }
+}
+
+/* 光标闪烁效果 */
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   发光效果动画
+   ======================================== */
+
+/* 发光脉冲动画的关键帧 - 模拟终端屏幕发光效果 */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--terminal-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--terminal-glow), 0 0 30px var(--terminal-glow);
+  }
+}
+
+
+/* ========================================
+   脉冲效果动画
+   ======================================== */
+
+/* 脉冲缩放的关键帧动画 - 呼吸式效果 */
+@keyframes pulse {
+  0% {
+    transform: scale(1);    /* 原始大小 */
+    opacity: 1;             /* 完全不透明 */
+  }
+  50% {
+    transform: scale(1.05); /* 轻微放大 */
+    opacity: 0.8;           /* 轻微透明 */
+  }
+  100% {
+    transform: scale(1);    /* 回到原始大小 */
+    opacity: 1;             /* 回到完全不透明 */
+  }
+}
+
+/* ========================================
+   淡入效果动画
+   ======================================== */
+
+/* 淡入动画的关键帧 - 从下方滑入并淡入 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;                    /* 开始时完全透明 */
+    transform: translateY(20px);   /* 从下方20px位置开始 */
+  }
+  to {
+    opacity: 1;                    /* 结束时完全不透明 */
+    transform: translateY(0);      /* 移动到最终位置 */
+  }
+}
+
+
+
+
+
+/* ========================================
+   缩放进入效果动画
+   ======================================== */
+
+/* 缩放进入动画的关键帧 - 从小到大的弹性进入 */
+@keyframes zoomIn {
+  from {
+    opacity: 0;              /* 开始时透明 */
+    transform: scale(0.8);   /* 开始时缩小到80% */
+  }
+  to {
+    opacity: 1;              /* 结束时完全可见 */
+    transform: scale(1);     /* 结束时恢复原始大小 */
+  }
+}
+
+/* ========================================
+   旋转进入效果动画
+   ======================================== */
+
+/* 逆时针旋转进入动画的关键帧 */
+@keyframes rotateIn {
+  from {
+    opacity: 0;                              /* 开始时透明 */
+    transform: rotate(-180deg) scale(0.8);   /* 逆时针旋转180度并缩小 */
+  }
+  to {
+    opacity: 1;                              /* 结束时完全可见 */
+    transform: rotate(0deg) scale(1);        /* 回到正常角度和大小 */
+  }
+}
+
+/* ========================================
+   弹跳效果动画
+   ======================================== */
+
+/* 弹跳动画的关键帧 - 模拟球体弹跳的物理效果 */
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);      /* 在地面位置 */
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);   /* 第一次弹跳最高点 */
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);   /* 第二次弹跳高度减半 */
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);   /* 第三次弹跳轻微 */
+  }
+}
+
+/* ========================================
+   摇摆效果动画
+   ======================================== */
+
+/* 标准摇摆动画的关键帧 - 用于错误提示或警告 */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);     /* 开始和结束位置 */
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);  /* 向左摇摆 */
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);   /* 向右摇摆 */
+  }
+}
+
+/* ========================================
+   呼吸效果动画
+   ======================================== */
+
+/* 呼吸动画的关键帧 - 模拟自然呼吸的节奏 */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);    /* 正常大小 - 呼气状态 */
+    opacity: 1;             /* 完全不透明 */
+  }
+  50% {
+    transform: scale(1.02); /* 轻微放大 - 吸气状态 */
+    opacity: 0.9;           /* 轻微透明 */
+  }
+}
+
+/* ========================================
+   扫描线效果动画
+   ======================================== */
+
+/* 扫描线移动动画的关键帧 - 模拟CRT显示器扫描效果 */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);  /* 从顶部上方开始 */
+    opacity: 0;                    /* 开始时透明 */
+  }
+  50% {
+    opacity: 1;                    /* 中间时完全可见 */
+  }
+  100% {
+    transform: translateY(100vh);  /* 移动到底部下方 */
+    opacity: 0;                    /* 结束时透明 */
+  }
+}
+
+/* ========================================
+   矩阵雨效果动画
+   ======================================== */
+
+/* 矩阵雨下落动画的关键帧 - 模拟《黑客帝国》数字雨效果 */
+@keyframes matrixRain {
+  0% {
+    transform: translateY(-100vh);  /* 从顶部上方开始下落 */
+    opacity: 0;                     /* 开始时透明 */
+  }
+  10% {
+    opacity: 1;                     /* 快速变为可见 */
+  }
+  90% {
+    opacity: 1;                     /* 保持可见状态 */
+  }
+  100% {
+    transform: translateY(100vh);   /* 下落到底部下方 */
+    opacity: 0;                     /* 结束时淡出 */
+  }
+}
+
+/* ========================================
+   终端启动效果动画
+   ======================================== */
+
+/* 终端启动动画的关键帧 - 模拟终端系统启动过程 */
+@keyframes terminalBoot {
+  0% {
+    opacity: 0;                    /* 开始时完全透明 */
+    transform: scale(0.95);        /* 开始时轻微缩小 */
+    filter: brightness(0);         /* 开始时完全黑暗 */
+  }
+  20% {
+    opacity: 0.3;                  /* 逐渐变亮 */
+    filter: brightness(0.3);       /* 亮度逐渐增加 */
+  }
+  50% {
+    opacity: 0.7;                  /* 继续变亮 */
+    filter: brightness(0.7);       /* 亮度继续增加 */
+  }
+  100% {
+    opacity: 1;                    /* 完全可见 */
+    transform: scale(1);           /* 恢复正常大小 */
+    filter: brightness(1);         /* 完全亮度 */
+  }
+}
+
+/* ========================================
+   代码高亮扫描效果动画
+   ======================================== */
+
+/* 代码高亮扫描动画的关键帧 - 从左到右的高亮扫描 */
+@keyframes codeHighlight {
+  0% {
+    background-position: -100% 0;  /* 高亮条从左侧外开始 */
+  }
+  100% {
+    background-position: 100% 0;   /* 高亮条移动到右侧外 */
+  }
+}
+
+/* ========================================
+   工具类 - 动画应用
+   ======================================== */
+
+/* 打字机效果工具类 - 完整的打字机动画设置 */
+.animate-typewriter {
+  animation: typewriter 2s steps(40) 1s both;  /* 2秒打字动画，40步，1秒延迟 */
+  overflow: hidden;                             /* 隐藏超出的文字 */
+  white-space: nowrap;                          /* 防止换行 */
+  border-right: 2px solid var(--terminal-green); /* 光标效果 */
+}
+
+/* 光标闪烁工具类 */
+.animate-blink {
+  animation: blink 1s infinite;  /* 持续闪烁动画 */
+}
+
+
+
+/* 脉冲动画工具类 */
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;  /* 持续的脉冲动画 */
+}
+
+/* 淡入动画工具类 */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;  /* 单次淡入动画 */
+}
+
+
+
+
+
+/* 缩放进入动画工具类 */
+.animate-zoom-in {
+  animation: zoomIn 0.6s ease-out;  /* 单次缩放进入动画 */
+}
+
+/* 旋转进入动画工具类 */
+.animate-rotate-in {
+  animation: rotateIn 0.8s ease-out;  /* 单次旋转进入动画 */
+}
+
+/* 弹跳动画工具类 */
+.animate-bounce {
+  animation: bounce 1s ease-in-out;  /* 单次弹跳动画 */
+}
+
+/* 摇摆动画工具类 */
+.animate-shake {
+  animation: shake 0.5s ease-in-out;  /* 单次摇摆动画 */
+}
+
+/* 呼吸动画工具类 */
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;  /* 持续呼吸动画 */
+}
+
+/* 终端启动动画工具类 */
+.animate-terminal-boot {
+  animation: terminalBoot 2s ease-out;  /* 单次终端启动动画 */
+}
+
+/* ========================================
+   延迟动画类
+   ======================================== */
+
+/* 100毫秒延迟 - 用于轻微的时序差异 */
+.animate-delay-100 {
+  animation-delay: 0.1s;
+}
+
+
+
+
+
+/* 500毫秒延迟 - 用于中等延迟的动画效果 */
+.animate-delay-500 {
+  animation-delay: 0.5s;
+}
+
+/* 700毫秒延迟 - 用于序列动画的较长延迟 */
+.animate-delay-700 {
+  animation-delay: 0.7s;
+}
+
+/* 1秒延迟 - 用于较长延迟的动画效果 */
+.animate-delay-1000 {
+  animation-delay: 1s;
+}
+
+/* ========================================
+   动画持续时间类
+   ======================================== */
+
+/* 快速动画持续时间 - 用于快速响应的交互 */
+.animate-duration-fast {
+  animation-duration: 0.3s;
+}
+
+/* 正常动画持续时间 - 标准的动画速度 */
+.animate-duration-normal {
+  animation-duration: 0.6s;
+}
+
+/* 慢速动画持续时间 - 用于重要内容的展示 */
+.animate-duration-slow {
+  animation-duration: 1s;
+}
+
+/* 更慢动画持续时间 - 用于特别重要的内容 */
+.animate-duration-slower {
+  animation-duration: 2s;
+}
+
+/* ========================================
+   特殊效果
+   ======================================== */
+
+/* 扫描线容器 - 为伪元素提供定位上下文 */
+.terminal-scanline {
+  position: relative;  /* 相对定位，为伪元素提供参考 */
+  overflow: hidden;    /* 隐藏超出容器的扫描线 */
+}
+
+/* 扫描线伪元素 - 创建移动的扫描线效果 */
+.terminal-scanline::before {
+  content: '';         /* 空内容，纯装饰性元素 */
+  position: absolute;  /* 绝对定位，相对于父容器 */
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;         /* 扫描线高度 */
+  background: linear-gradient(90deg, 
+    transparent,                   /* 左侧透明 */
+    var(--terminal-green),         /* 中间终端绿色 */
+    transparent                    /* 右侧透明 */
+  );
+  animation: scanline 3s linear infinite;  /* 持续的线性扫描动画 */
+  z-index: 1;          /* 确保在内容之上 */
+}
+
+.terminal-glitch {
+  position: relative;
+}
+
+.terminal-glitch::before,
+.terminal-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--terminal-bg-primary);
+}
+
+.terminal-glitch::before {
+  animation: glitch-1 0.5s infinite;
+  color: var(--terminal-accent-red);
+  z-index: -1;
+}
+
+.terminal-glitch::after {
+  animation: glitch-2 0.5s infinite;
+  color: var(--terminal-accent-blue);
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 14%, 15%, 49%, 50%, 99%, 100% {
+    transform: translate(0, 0);
+  }
+  15%, 49% {
+    transform: translate(-2px, 0);
+  }
+}
+
+@keyframes glitch-2 {
+  0%, 20%, 21%, 62%, 63%, 99%, 100% {
+    transform: translate(0, 0);
+  }
+  21%, 62% {
+    transform: translate(2px, 0);
+  }
+}
+
+/* ========================================
+   代码块动画
+   ======================================== */
+
+/* 代码块高亮扫描效果 - 用于代码块或重要文本的强调 */
+.code-block-animated {
+  background: linear-gradient(
+    90deg,
+    var(--terminal-bg-light) 0%,      /* 左侧使用浅背景色 */
+    rgba(0, 255, 0, 0.1) 50%,         /* 中间半透明绿色高亮 */
+    var(--terminal-bg-light) 100%     /* 右侧使用浅背景色 */
+  );
+  background-size: 200% 100%;         /* 背景尺寸为元素的两倍宽，实现扫描效果 */
+  animation: codeHighlight 2s ease-in-out infinite;  /* 持续的扫描动画 */
+}
+
+/* ========================================
+   悬停动画
+   ======================================== */
+
+/* 悬停脉冲效果 - 鼠标悬停时触发脉冲动画 */
+.hover-pulse:hover {
+  animation: pulse 0.5s ease-in-out;  /* 单次脉冲动画 */
+}
+
+/* 悬停弹跳效果 - 鼠标悬停时触发弹跳动画 */
+.hover-bounce:hover {
+  animation: bounce 0.6s ease-in-out;  /* 单次弹跳动画 */
+}
+
+/* ========================================
+   响应式动画控制
+   ======================================== */
+
+/* 用户偏好：减少动画 - 尊重用户的无障碍访问需求 */
+@media (prefers-reduced-motion: reduce) {
+  /* 为所有元素禁用或极大缩短动画时间 */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;      /* 几乎瞬时完成动画 */
+    animation-iteration-count: 1 !important;    /* 只播放一次 */
+    transition-duration: 0.01ms !important;     /* 几乎瞬时完成过渡 */
+  }
+}
+
+/* ========================================
+   移动设备动画优化
+   ======================================== */
+
+/* 平板设备动画优化 - 减少动画持续时间以提升性能 */
+@media (max-width: 768px) {
+  /* 打字机效果在移动设备上加快速度 */
+  .animate-typewriter {
+    animation-duration: 1.5s;
+  }
+  
+  /* 终端启动效果在移动设备上加快速度 */
+  .animate-terminal-boot {
+    animation-duration: 1.5s;
+  }
+  
+  /* 扫描线效果在移动设备上加快速度 */
+  .terminal-scanline::before {
+    animation-duration: 2s;
+  }
+}

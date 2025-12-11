@@ -1,0 +1,273 @@
+/**
+ * 终端风格首页样式
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+/* 终端页面容器 */
+.terminalPage {
+  min-height: 100vh;
+  background-color: var(--terminal-bg-primary);
+  color: var(--terminal-text-primary);
+}
+
+/* Hero区域 */
+.heroBanner {
+  padding: 4rem 0 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    var(--terminal-bg-primary) 0%,
+    var(--terminal-bg-secondary) 50%,
+    var(--terminal-bg-primary) 100%
+  );
+  border-bottom: 1px solid var(--terminal-border-primary);
+}
+
+.heroContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--terminal-spacing-lg);
+}
+
+/* ASCII艺术字区域 */
+.asciiSection {
+  margin-bottom: var(--terminal-spacing-xl);
+  animation: fadeIn 1s ease-out;
+}
+
+/* 标题区域 */
+.titleSection {
+  margin-bottom: var(--terminal-spacing-xl);
+}
+
+.subtitle {
+  margin-top: var(--terminal-spacing-md);
+  margin-bottom: var(--terminal-spacing-xl);
+  font-size: var(--terminal-font-size-lg);
+  color: var(--terminal-text-secondary);
+  font-family: var(--terminal-font-family);
+  text-align: center;
+}
+
+/* 按钮区域 */
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--terminal-spacing-md);
+  flex-wrap: wrap;
+}
+
+/* 主要内容区域 */
+.mainContent {
+  /* padding: 0 0 var(--terminal-spacing-xl) 0; */
+}
+
+/* 终端区域 */
+.terminalSection {
+  padding: var(--terminal-spacing-xl) 0;
+  background-color: var(--terminal-bg-secondary);
+  border-top: 1px solid var(--terminal-border-primary);
+  border-bottom: 1px solid var(--terminal-border-primary);
+}
+
+.terminalWrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  margin-bottom: var(--terminal-spacing-lg);
+  text-align: left;
+}
+
+/* 特性展示区域 */
+.featuresSection {
+  padding: var(--terminal-spacing-xl) 0;
+  background-color: var(--terminal-bg-primary);
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--terminal-spacing-lg);
+  margin-top: var(--terminal-spacing-lg);
+}
+
+.featuresGrid .terminal-card {
+  padding: var(--terminal-spacing-lg);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.featuresGrid .terminal-card h3 {
+  color: var(--terminal-accent-blue);
+  margin-bottom: var(--terminal-spacing-md);
+  font-size: var(--terminal-font-size-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--terminal-spacing-sm);
+}
+
+.featuresGrid .terminal-card p {
+  color: var(--terminal-text-secondary);
+  margin-bottom: var(--terminal-spacing-md);
+  flex-grow: 1;
+  line-height: 1.6;
+}
+
+.featuresGrid .terminal-card code {
+  background-color: var(--terminal-bg-tertiary);
+  color: var(--terminal-accent-green);
+  padding: var(--terminal-spacing-sm);
+  border-radius: var(--terminal-radius-sm);
+  font-size: var(--terminal-font-size-sm);
+  border: 1px solid var(--terminal-border-secondary);
+  display: block;
+  margin-top: auto;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 3rem 0 1.5rem;
+  }
+  
+  .heroContainer {
+    padding: 0 var(--terminal-spacing-md);
+  }
+  
+  .buttons {
+    flex-direction: column;
+    gap: var(--terminal-spacing-sm);
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: var(--terminal-spacing-md);
+  }
+  
+  .terminalWrapper {
+    padding: 0 var(--terminal-spacing-md);
+  }
+}
+
+/* OpenAtom Foundation Section */
+.foundationSection {
+  padding: 4rem 0;
+  background-color: var(--terminal-bg-primary);
+  border-top: 1px solid var(--terminal-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.foundationSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--terminal-bg-tertiary);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.foundationContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--terminal-spacing-lg);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--terminal-spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.foundationLogo {
+  height: 48px;
+  width: auto;
+  transition: all 0.3s ease;
+  filter: drop-shadow(1px 1px 1.5rem rgba(0,0,0,1));
+}
+
+.foundationText {
+  color: var(--terminal-text-primary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+  font-family: var(--terminal-font-family);
+  transition: color 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .heroBanner {
+    padding: 2rem 0 1rem;
+  }
+  
+  .asciiSection {
+    margin-bottom: var(--terminal-spacing-lg);
+  }
+  
+  .titleSection {
+    margin-bottom: var(--terminal-spacing-lg);
+  }
+  
+  .subtitle {
+    font-size: var(--terminal-font-size-base);
+  }
+  
+  .mainContent {
+    padding: var(--terminal-spacing-lg) 0;
+  }
+  
+  .terminalSection,
+  .featuresSection {
+    padding: var(--terminal-spacing-lg) 0;
+  }
+  
+  .foundationSection {
+    padding: var(--terminal-spacing-lg) 0;
+    margin-top: var(--terminal-spacing-md);
+  }
+
+  .foundationContent {
+    flex-direction: column;
+    gap: var(--terminal-spacing-md);
+    padding: 0 var(--terminal-spacing-md);
+  }
+
+  .foundationLogo {
+    height: 36px;
+  }
+
+  .foundationText {
+    font-size: var(--terminal-font-size-base);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .heroContainer {
+    padding: 0 var(--terminal-spacing-sm);
+  }
+  
+  .buttons {
+    width: 100%;
+  }
+  
+  .buttons .terminal-button {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .featuresGrid .terminal-card {
+    padding: var(--terminal-spacing-md);
+  }
+}

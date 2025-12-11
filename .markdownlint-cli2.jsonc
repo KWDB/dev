@@ -1,0 +1,105 @@
+{
+  // markdownlint-cli2 配置文件
+  // 针对 Docusaurus 项目和中文文档优化
+  
+  // 指定要检查的文件
+  "globs": [
+    "docs/**/*.md",
+    "*.md"
+  ],
+  
+  // 忽略的文件和目录
+  "ignores": [
+    "node_modules/**",
+    "build/**",
+    ".docusaurus/**",
+    "**/node_modules/**"
+  ],
+  
+  // markdownlint 规则配置
+  "config": {
+    // 默认启用所有规则
+    "default": true,
+    
+    // MD001: 标题层级应该递增
+    "MD001": true,
+    
+    // MD003: 标题样式 - 使用 ATX 风格 (# ## ###)
+    "MD003": {
+      "style": "atx"
+    },
+    
+    // MD004: 无序列表样式 - 使用连字符
+    "MD004": {
+      "style": "dash"
+    },
+    
+    // MD007: 无序列表缩进 - 2个空格
+    "MD007": {
+      "indent": 2
+    },
+    
+    // MD009: 行尾空格 - 允许在行尾有空格（某些情况下需要）
+    "MD009": {
+      "br_spaces": 2,
+      "list_item_empty_lines": false
+    },
+    
+    // MD010: 硬制表符 - 禁用，因为某些代码块可能需要制表符
+    "MD010": false,
+    
+    // MD013: 行长度限制 - 禁用，因为中文文档和表格可能很长
+    "MD013": false,
+    
+    // MD024: 重复标题 - 允许在不同章节有相同标题
+    "MD024": false,
+    
+    // MD025: 单个 H1 标题 - 禁用，因为 Docusaurus 会自动处理
+    "MD025": false,
+    
+    // MD026: 标题末尾标点符号 - 允许中文标点
+    "MD026": {
+      "punctuation": ".,;:!?"
+    },
+    
+    // MD033: 内联 HTML - 允许，因为 Docusaurus 支持 JSX
+    "MD033": false,
+    
+    // MD034: 裸露的 URL - 禁用，因为某些情况下需要裸露 URL
+    "MD034": false,
+    
+    // MD036: 强调代替标题 - 启用
+    "MD036": false,
+    
+    // MD040: 代码块语言 - 启用，要求指定语言
+    "MD040": true,
+    
+    // MD041: 文件首行应该是顶级标题 - 禁用，因为 Docusaurus 有 frontmatter
+    "MD041": false,
+    
+    // MD046: 代码块样式 - 使用围栏式代码块
+    "MD046": {
+      "style": "fenced"
+    },
+    
+    // MD049: 强调样式 - 使用星号
+    "MD049": {
+      "style": "asterisk"
+    },
+    
+    // MD050: 加粗样式 - 使用双星号
+    "MD050": {
+      "style": "asterisk"
+    }
+  },
+  
+  // 自定义修复选项
+  "fix": true,
+  
+  // 输出格式
+  "outputFormatters": [
+    [
+      "markdownlint-cli2-formatter-default"
+    ]
+  ]
+}

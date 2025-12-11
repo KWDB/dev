@@ -1,0 +1,3618 @@
+/*
+ * ========================================
+ * 大赛页面样式文件
+ * ========================================
+ * 
+ * 文件名：competition.module.css
+ * 用途：定义大赛页面的所有样式和布局
+ * 主要功能：
+ *   - 英雄区域（Hero Section）样式和动画效果
+ *   - 大赛信息展示卡片（通知、培训、日程等）
+ *   - 响应式布局和移动端适配
+ *   - 亮色/暗色主题模式支持
+ *   - 现代化的交互效果和动画
+ * 
+ * 依赖关系：
+ *   - 使用CSS自定义属性（CSS Variables）
+ *   - 兼容Docusaurus主题系统
+ *   - 支持data-theme属性切换
+ * 
+ * 注意事项：
+ *   - 采用模块化CSS设计，避免全局样式污染
+ *   - 所有动画都经过性能优化
+ *   - 支持用户的减少动画偏好设置
+ *   - 遵循现代Web设计最佳实践
+ */
+/* ========================================
+   CSS 变量定义 - 大赛页面主题配置
+   ======================================== */
+:root {
+  /* 间距系统 - 基于4px网格的设计系统 */
+  --section-spacing: 4rem;        /* 区域间距 - 用于主要内容区域的垂直间距 */
+  --spacing-2xl: 2rem;            /* 超大间距 - 用于卡片内部和重要元素间距 */
+  --spacing-lg: 1.5rem;           /* 大间距 - 用于一般元素间距 */
+  
+  /* 亮色模式主题色彩 */
+  --terminal-bg-secondary: #ffffff;     /* 次要背景色 - 卡片和容器背景 */
+  --terminal-border-primary: #e5e7eb;   /* 主要边框色 - 卡片边框和分割线 */
+  --terminal-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);  /* 小阴影 - 卡片默认阴影 */
+  --terminal-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);  /* 大阴影 - 悬停状态阴影 */
+  --terminal-accent-blue: #3b82f6;      /* 强调蓝色 - 链接和按钮主色 */
+  --terminal-text-primary: #1f2937;     /* 主要文本色 - 标题和重要文本 */
+  --terminal-text-secondary: #6b7280;   /* 次要文本色 - 描述和辅助文本 */
+  --terminal-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;  /* 系统字体栈 */
+}
+
+/* 暗色模式主题适配 - 深色背景下的色彩调整 */
+[data-theme='dark'] {
+  --terminal-bg-secondary: #1f2937;     /* 暗色次要背景 - 深灰色卡片背景 */
+  --terminal-border-primary: #374151;   /* 暗色边框 - 深色模式下的边框色 */
+  --terminal-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);  /* 暗色小阴影 - 增强对比度 */
+  --terminal-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);  /* 暗色大阴影 - 悬停效果 */
+  --terminal-accent-blue: #60a5fa;      /* 暗色强调蓝 - 更亮的蓝色以提高对比度 */
+  --terminal-text-primary: #f9fafb;     /* 暗色主文本 - 接近白色的文本色 */
+  --terminal-text-secondary: #d1d5db;   /* 暗色次文本 - 浅灰色辅助文本 */
+}
+
+/* ========================================
+   布局容器 - 页面主要布局结构
+   ======================================== */
+
+/* 主容器 - 限制最大宽度并居中对齐 */
+.container {
+  max-width: 1200px;    /* 最大宽度限制，保证在大屏幕上的可读性 */
+  margin: 0 auto;       /* 水平居中对齐 */
+  padding: 0 1rem;      /* 左右内边距，防止内容贴边 */
+  position: relative;   /* 为子元素提供定位上下文 */
+}
+
+.competitionContainer {
+  min-height: 100vh;        /* 最小高度为视窗高度，确保全屏显示 */
+  background: #ffffff;      /* 亮色模式默认背景色 */
+  position: relative;       /* 为绝对定位的子元素提供定位上下文 */
+  overflow-x: hidden;       /* 隐藏水平滚动条，防止内容溢出 */
+  
+  /* 性能优化 - 启用CSS包含和硬件加速 */
+  contain: layout style;    /* 限制布局和样式的重新计算范围，提升性能 */
+  transform: translateZ(0); /* 强制启用硬件加速，优化渲染性能 */
+}
+
+/* 暗色模式主容器适配 */
+[data-theme='dark'] .competitionContainer {
+  background: #0f172a;  /* 深色背景 - 深蓝灰色 */
+  color: #f1f5f9;       /* 浅色文本 - 接近白色的灰色 */
+}
+
+/* ========================================
+   动画定义 - 简化的交互反馈动画
+   ======================================== */
+
+/* 淡入动画 - 简化版本，仅透明度变化 */
+@keyframes fadeIn {
+  from { opacity: 0; }  /* 起始状态：完全透明 */
+  to { opacity: 1; }    /* 结束状态：完全不透明 */
+}
+
+/* ========================================
+   性能优化 - 模块化样式和重绘控制
+   ======================================== */
+
+/* 统一盒模型 - 确保所有元素使用border-box */
+.competitionContainer * {
+  box-sizing: border-box;  /* 包含边框和内边距在元素宽高内 */
+}
+
+/* 动态性能优化 - 仅在悬停时启用变换优化 */
+.competitionContainer *:hover {
+  will-change: transform;  /* 提示浏览器该元素将发生变换，预先优化 */
+}
+
+/* 清理性能提示 - 非悬停状态下移除优化提示 */
+.competitionContainer *:not(:hover) {
+  will-change: auto;       /* 恢复默认状态，释放优化资源 */
+}
+
+/* ========================================
+   Hero Section - 英雄区域主要样式
+   ======================================== */
+
+/* 英雄区域主容器 - 渐变背景和居中布局 */
+.heroSection {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url('/static/img/competition.jpg'),
+    linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);  /* 半透明遮罩 + 背景图片 + 渐变备用 */
+  background-size: cover;   /* 背景图片覆盖整个容器 */
+  background-position: center;  /* 背景图片居中显示 */
+  background-repeat: no-repeat;  /* 不重复背景图片 */
+  background-attachment: fixed;  /* 固定背景，创建视差效果 */
+  color: white;             /* 白色文本，确保在深色背景上的可读性 */
+  padding: 120px 0 100px;   /* 上下内边距：为导航栏和内容留出充足空间 */
+  text-align: center;       /* 文本居中对齐 */
+  position: relative;       /* 为伪元素背景效果提供定位上下文 */
+  overflow: hidden;         /* 隐藏溢出的背景效果 */
+  min-height: 70vh;         /* 最小高度为70%视窗高度，确保视觉冲击力 */
+  display: flex;            /* 弹性布局 */
+  align-items: center;      /* 垂直居中对齐内容 */
+}
+
+/* 英雄区域背景装饰效果 - 径向渐变光晕 */
+.heroSection::before {
+  content: '';              /* 伪元素内容为空 */
+  position: absolute;       /* 绝对定位覆盖整个容器 */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* 双重径向渐变创建光晕效果 */
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),  /* 左下角紫色光晕 */
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%); /* 右上角白色光晕 */
+  pointer-events: none;     /* 不阻挡鼠标事件，确保内容可交互 */
+}
+
+/* 主题模式适配 - 不同主题下的背景渐变 */
+[data-theme='dark'] .heroSection {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url('/static/img/competition.jpg'),
+    linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);  /* 暗色模式：更深遮罩 + 背景图片 + 深色调渐变 */
+}
+
+[data-theme='light'] .heroSection {
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url('/static/img/competition.jpg'),
+    linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);  /* 亮色模式：适中遮罩 + 背景图片 + 蓝色调渐变 */
+}
+
+/* 英雄区域主标题 - 大字体渐变文本效果 */
+.heroTitle {
+  font-size: 4.5rem;        /* 超大字体尺寸，增强视觉冲击力 */
+  font-weight: 800;         /* 超粗字重，确保标题突出 */
+  margin-bottom: 1.5rem;    /* 下边距，与副标题保持适当间距 */
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);  /* 文本阴影，增加深度感 */
+  position: relative;       /* 相对定位，确保在背景效果之上 */
+  z-index: 1;              /* 层级控制，确保文本在最上层 */
+  line-height: 1.1;        /* 紧凑行高，适合大字体显示 */
+  letter-spacing: -0.02em; /* 轻微负字间距，优化大字体视觉效果 */
+  
+  /* 渐变文本效果 - 白色到浅灰色渐变 */
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;     /* WebKit浏览器文本裁剪 */
+  -webkit-text-fill-color: transparent;  /* WebKit浏览器透明文本填充 */
+  background-clip: text;             /* 标准文本裁剪属性 */
+}
+
+/* 英雄区域副标题 - 描述性文本样式 */
+.heroSubtitle {
+  font-size: 2rem;          /* 大字体尺寸，但小于主标题 */
+  margin-bottom: 3rem;      /* 下边距，与按钮区域保持充足间距 */
+  opacity: 0.95;           /* 轻微透明度，创建层次感 */
+  position: relative;       /* 相对定位，确保在背景效果之上 */
+  z-index: 1;              /* 层级控制 */
+  font-weight: 500;        /* 中等字重，平衡可读性和视觉重量 */
+  line-height: 1.4;        /* 适中行高，确保多行文本的可读性 */
+  max-width: 600px;        /* 最大宽度限制，优化阅读体验 */
+  margin-left: auto;       /* 左边距自动，配合右边距实现居中 */
+  margin-right: auto;      /* 右边距自动，实现水平居中 */
+}
+
+/* 英雄区域操作按钮容器 - 弹性布局 */
+.heroActions {
+  position: relative;       /* 相对定位，确保在背景效果之上 */
+  z-index: 1;              /* 层级控制，确保按钮可交互 */
+  display: flex;           /* 弹性布局 */
+  gap: 1.5rem;             /* 按钮间距 */
+  justify-content: center; /* 水平居中对齐 */
+  align-items: center;     /* 垂直居中对齐 */
+  flex-wrap: wrap;         /* 允许换行，适应小屏幕 */
+}
+
+/* ========================================
+   按钮样式 - 主要和次要操作按钮
+   ======================================== */
+
+/* 主要按钮 - 橙色渐变，用于主要操作 */
+.primaryButton {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);  /* 橙色渐变背景 */
+  color: white;             /* 白色文本，确保对比度 */
+  padding: 18px 36px;       /* 内边距，提供足够的点击区域 */
+  border-radius: 12px;      /* 圆角，现代化外观 */
+  text-decoration: none;    /* 移除下划线 */
+  font-weight: 600;         /* 半粗字重，突出重要性 */
+  font-size: 1.125rem;      /* 稍大字体，提高可读性 */
+  display: inline-block;    /* 行内块元素，支持宽高设置 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* 平滑过渡动画 */
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);    /* 橙色阴影，增加深度感 */
+  border: none;             /* 移除默认边框 */
+  cursor: pointer;          /* 指针光标，表明可点击 */
+  position: relative;       /* 为伪元素提供定位上下文 */
+  overflow: hidden;         /* 隐藏溢出的动画效果 */
+}
+
+/* 主要按钮暗色模式适配 */
+[data-theme='dark'] .primaryButton {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);  /* 保持橙色渐变，在暗色背景下依然醒目 */
+  color: white;             /* 白色文本保持不变 */
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);    /* 增强阴影透明度，在暗色背景下更明显 */
+}
+
+/* 主要按钮光泽动画效果 - 悬停时的光泽扫过效果 */
+.primaryButton::before {
+  content: '';              /* 伪元素内容为空 */
+  position: absolute;       /* 绝对定位覆盖按钮 */
+  top: 0;
+  left: -100%;             /* 初始位置在按钮左侧外部 */
+  width: 100%;             /* 与按钮同宽 */
+  height: 100%;            /* 与按钮同高 */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);  /* 水平白色光泽渐变 */
+  transition: left 0.5s;   /* 位置变化的平滑过渡 */
+}
+
+/* 主要按钮悬停状态 - 上浮和阴影增强 */
+.primaryButton:hover {
+  transform: translateY(-3px);  /* 向上移动3px，创建悬浮效果 */
+  box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);  /* 增强阴影，强化悬浮感 */
+  text-decoration: none;    /* 确保无下划线 */
+  color: white;            /* 保持白色文本 */
+}
+
+/* 悬停时触发光泽动画 */
+.primaryButton:hover::before {
+  left: 100%;              /* 光泽从左侧扫过到右侧 */
+}
+
+/* 主要按钮暗色模式悬停效果 */
+[data-theme='dark'] .primaryButton:hover {
+  transform: translateY(-3px);  /* 同样的上浮效果 */
+  box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5);  /* 暗色模式下更强的阴影 */
+  color: white;            /* 保持白色文本 */
+}
+
+/* 主要按钮激活状态 - 按下时的反馈 */
+.primaryButton:active {
+  transform: translateY(-1px);  /* 轻微上浮，模拟按下反弹 */
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);  /* 减弱阴影，模拟按下效果 */
+}
+
+/* 次要按钮 - 半透明玻璃效果，用于次要操作 */
+.secondaryButton {
+  background: rgba(255, 255, 255, 0.1);  /* 半透明白色背景，创建玻璃效果 */
+  color: white;             /* 白色文本 */
+  padding: 18px 36px;       /* 与主要按钮相同的内边距 */
+  border-radius: 12px;      /* 圆角，与主要按钮保持一致 */
+  text-decoration: none;    /* 移除下划线 */
+  font-weight: 600;         /* 半粗字重 */
+  font-size: 1.125rem;      /* 与主要按钮相同的字体大小 */
+  display: inline-block;    /* 行内块元素 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* 平滑过渡动画 */
+  border: 2px solid rgba(255, 255, 255, 0.3);  /* 半透明白色边框 */
+  cursor: pointer;          /* 指针光标 */
+  position: relative;       /* 为伪元素提供定位上下文 */
+  overflow: hidden;         /* 隐藏溢出的动画效果 */
+  backdrop-filter: blur(10px);  /* 背景模糊效果，增强玻璃质感 */
+}
+
+/* 次要按钮暗色模式适配 */
+[data-theme='dark'] .secondaryButton {
+  background: rgba(255, 255, 255, 0.05);  /* 更低透明度的背景，适应暗色环境 */
+  border: 2px solid rgba(255, 255, 255, 0.2);  /* 更低透明度的边框 */
+  color: white;             /* 保持白色文本 */
+}
+
+.secondaryButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.secondaryButton:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  color: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.secondaryButton:hover::before {
+  left: 100%;
+}
+
+/* 暗模式次要按钮悬停 */
+[data-theme='dark'] .secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.secondaryButton:active {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* 响应式设计 - 按钮布局 */
+@media (max-width: 768px) {
+  .heroActions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+}
+
+/* 通用区域样式 - 参考下载页面设计 */
+.noticeSection,
+.trainingSection,
+.scheduleSection,
+.backgroundSection,
+.topicsSection,
+.benefitsSection,
+.feedbackSection {
+  padding: var(--section-spacing) 0;
+  position: relative;
+}
+
+/* 统一section标题样式 - 参考下载页面设计 */
+.competitionContainer h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: var(--section-spacing);
+  color: var(--terminal-text-primary);
+  font-family: var(--terminal-font-family);
+  display: block;
+  line-height: 1.3;
+}
+
+[data-theme='dark'] .competitionContainer h2 {
+  color: var(--terminal-text-primary);
+}
+
+/* 交替背景色，与下载页面保持一致 */
+.trainingSection,
+.backgroundSection,
+.benefitsSection {
+  background: var(--ifm-color-emphasis-100);
+}
+
+[data-theme='dark'] .trainingSection,
+[data-theme='dark'] .backgroundSection,
+[data-theme='dark'] .benefitsSection {
+  background: #0d1117;
+}
+
+/* 确保所有section在暗模式下的文本颜色正确 */
+[data-theme='dark'] .noticeSection,
+[data-theme='dark'] .trainingSection,
+[data-theme='dark'] .scheduleSection,
+[data-theme='dark'] .backgroundSection,
+[data-theme='dark'] .topicsSection,
+[data-theme='dark'] .benefitsSection,
+[data-theme='dark'] .feedbackSection {
+  color: var(--terminal-text-primary);
+}
+
+/* 通用卡片样式 - 参考下载页面设计 */
+.noticeCard,
+.trainingCard,
+.backgroundCard,
+.challengeCard,
+.benefitCard,
+.feedbackCard {
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  border-radius: 16px;
+  padding: var(--spacing-2xl);
+  margin: var(--spacing-lg) 0;
+  transition: all 0.3s ease;
+  box-shadow: var(--terminal-shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 暗模式卡片样式 */
+[data-theme='dark'] .noticeCard,
+[data-theme='dark'] .trainingCard,
+[data-theme='dark'] .backgroundCard,
+[data-theme='dark'] .challengeCard,
+[data-theme='dark'] .benefitCard,
+[data-theme='dark'] .feedbackCard {
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+  box-shadow: var(--terminal-shadow-sm);
+}
+
+.noticeCard:hover,
+.trainingCard:hover,
+.backgroundCard:hover,
+.challengeCard:hover,
+.benefitCard:hover,
+.feedbackCard:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--terminal-shadow-lg);
+  border-color: var(--terminal-accent-blue);
+}
+
+/* 暗模式卡片悬停状态 */
+[data-theme='dark'] .noticeCard:hover,
+[data-theme='dark'] .trainingCard:hover,
+[data-theme='dark'] .backgroundCard:hover,
+[data-theme='dark'] .challengeCard:hover,
+[data-theme='dark'] .benefitCard:hover,
+[data-theme='dark'] .feedbackCard:hover {
+  box-shadow: var(--terminal-shadow-lg);
+  border-color: var(--terminal-accent-blue);
+}
+
+/* 卡片头部样式 - 紧凑版本 */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  gap: 0.6rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* 福利卡片操作区域 */
+.benefitActions {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+/* 反馈区域操作按钮 */
+.feedbackActions {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.wechatQrCode {
+  width: 320px;
+  height: 320px;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+}
+
+[data-theme='dark'] .wechatQrCode {
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* 申请按钮样式 - 基于 primaryButton 但更紧凑 */
+.applyButton {
+  display: inline-block;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 暗模式申请按钮 */
+[data-theme='dark'] .applyButton {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  color: #0f172a;
+  border: 2px solid rgba(96, 165, 250, 0.3);
+  box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.applyButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.applyButton:hover::before {
+  left: 100%;
+}
+
+.applyButton:hover {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3), 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* 暗模式申请按钮悬停 */
+[data-theme='dark'] .applyButton:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(96, 165, 250, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(96, 165, 250, 0.5);
+}
+
+.applyButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 创建 Issue 按钮样式 - 基于 applyButton 但使用绿色主题 */
+.issueButton {
+  display: inline-block;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  cursor: pointer;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 暗模式创建 Issue 按钮 */
+[data-theme='dark'] .issueButton {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  color: #0f172a;
+  border: 2px solid rgba(52, 211, 153, 0.3);
+  box-shadow: 0 4px 16px rgba(52, 211, 153, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.issueButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.issueButton:hover::before {
+  left: 100%;
+}
+
+.issueButton:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3), 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* 暗模式创建 Issue 按钮悬停 */
+[data-theme='dark'] .issueButton:hover {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(52, 211, 153, 0.4), 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.issueButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cardIcon {
+  font-size: 1.6rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 16px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25), 0 2px 8px rgba(59, 130, 246, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cardIcon:hover {
+  transform: scale(1.08) rotate(5deg);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.35), 0 4px 12px rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+}
+
+.cardHeader h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* 暗模式卡片标题 */
+[data-theme='dark'] .cardHeader h3 {
+  color: #f1f5f9;
+}
+
+/* 特别注意区域 - 现代设计 */
+.noticeSection {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%);
+  position: relative;
+  border-top: 1px solid rgba(251, 191, 36, 0.2);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+/* 暗模式注意区域 */
+[data-theme='dark'] .noticeSection {
+  background: linear-gradient(135deg, #451a03 0%, #292524 100%);
+  border-top: 1px solid rgba(251, 191, 36, 0.3);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+/* 注意卡片特殊样式覆盖 */
+.noticeCard {
+  border-color: #f6ad55;
+  border-radius: 12px;
+}
+
+.noticeCard h2 {
+  color: #856404;
+  margin-bottom: 0.6rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.noticeCard h3 {
+  color: #495057;
+  margin-bottom: 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 暗模式注意卡片文本 */
+[data-theme='dark'] .noticeCard h2 {
+  color: #fbbf24;
+}
+
+[data-theme='dark'] .noticeCard h3 {
+  color: #d1d5db;
+}
+
+/* 培训区域 - 现代设计 */
+.trainingSection {
+  background: linear-gradient(135deg, #f1f5f9 0%, #f8fafc 100%);
+  position: relative;
+}
+
+/* 暗模式培训区域 */
+[data-theme='dark'] .trainingSection {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+/* 视频容器样式 */
+.competitionContainer .videoContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 视频容器 - 响应式网格布局 */
+.videoContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-items: center;
+  /* 性能优化 */
+  contain: layout style;
+  will-change: auto;
+}
+
+/* 视频卡片样式 - 响应式优化版本 */
+.competitionContainer .videoCard {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  width: 100%;
+  will-change: transform;
+  /* 移除固定的aspect-ratio限制，让内容自然展开 */
+  min-height: 320px; /* 设置最小高度确保基本显示 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 视频卡片 - 紧凑设计 */
+.videoCard {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  /* 触摸优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 暗模式视频卡片 */
+[data-theme='dark'] .videoCard {
+  background: #1e293b;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.competitionContainer .videoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.videoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  border-color: rgba(49, 130, 206, 0.3);
+}
+
+/* 暗模式视频卡片悬停 */
+[data-theme='dark'] .videoCard:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* 深色模式样式 */
+[data-theme='dark'] .competitionContainer .videoCard {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .competitionContainer .videoCard:hover {
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* 视频缩略图和iframe样式 - 响应式优化版本 */
+.competitionContainer .videoThumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9; /* 标准视频比例 */
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.competitionContainer .videoIframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 16px 16px 0 0;
+  object-fit: cover; /* 确保视频封面完整显示且无黑边 */
+  transition: opacity 0.2s ease;
+  /* 优化iframe内容适配 */
+  transform-origin: top left;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.competitionContainer .videoCard:hover .videoIframe {
+  opacity: 0.9;
+}
+
+/* 深色模式 */
+[data-theme='dark'] .competitionContainer .videoThumbnail,
+[data-theme='dark'] .competitionContainer .videoIframe {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+}
+
+/* 视频覆盖层 */
+.competitionContainer .videoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 16px 16px 0 0;
+}
+
+.competitionContainer .videoCard:hover .videoOverlay {
+  opacity: 1;
+}
+
+/* 播放图标 - 优化版本 */
+.competitionContainer .playIcon {
+  color: white;
+  background: rgba(59, 130, 246, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  padding: 1rem;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.competitionContainer .videoCard:hover .playIcon {
+  background: rgba(59, 130, 246, 1);
+  transform: scale(1.1);
+}
+
+/* 深色模式 */
+[data-theme='dark'] .competitionContainer .playIcon {
+  background: rgba(59, 130, 246, 0.95);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme='dark'] .competitionContainer .videoCard:hover .playIcon {
+  background: rgba(59, 130, 246, 1);
+}
+
+/* 视频时长 */
+.competitionContainer .videoDuration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 视频信息区域 - 响应式优化版本 */
+.competitionContainer .videoInfo {
+  padding: 1.2rem; /* 增加内边距，提供更多显示空间 */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* 改为顶部对齐，避免内容被压缩 */
+  min-height: 120px; /* 设置最小高度确保有足够空间 */
+  gap: 0.5rem; /* 添加元素间距 */
+}
+
+.competitionContainer .videoTitle {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 增加到3行，确保标题完整显示 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.competitionContainer .videoDescription {
+  color: #64748b;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* 增加到4行，确保描述信息完整显示 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+/* 视频信息 - 紧凑设计 */
+.videoInfo {
+  padding: 1rem;
+}
+
+.videoInfo h4 {
+  color: #2d3748;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
+
+.videoDescription {
+  color: #4a5568;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 0.8rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 暗模式视频信息 */
+[data-theme='dark'] .videoInfo h4 {
+  color: #f1f5f9;
+}
+
+[data-theme='dark'] .videoDescription {
+  color: #cbd5e1;
+}
+
+.competitionContainer .videoMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* 深色模式文本颜色 */
+[data-theme='dark'] .competitionContainer .videoTitle {
+  color: #f1f5f9;
+}
+
+[data-theme='dark'] .competitionContainer .videoDescription,
+[data-theme='dark'] .competitionContainer .videoMeta {
+  color: #94a3b8;
+}
+
+.competitionContainer .videoCategory {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  padding: 0.2rem 0.4rem;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+[data-theme='dark'] .competitionContainer .videoCategory {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.competitionContainer .videoViews {
+  font-weight: 500;
+}
+
+/* 视频模态框样式 */
+.videoModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  /* 触摸优化 */
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+
+.videoModalContent {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+[data-theme='dark'] .videoModalContent {
+  background: #1e293b;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+}
+
+.videoModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(248, 250, 252, 0.8);
+}
+
+[data-theme='dark'] .videoModalHeader {
+  border-bottom: 1px solid rgba(71, 85, 105, 0.6);
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.videoModalHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+[data-theme='dark'] .videoModalHeader h3 {
+  color: #f1f5f9;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 触摸优化 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.closeButton:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+[data-theme='dark'] .closeButton {
+  color: #94a3b8;
+}
+
+[data-theme='dark'] .closeButton:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.videoModalBody {
+  position: relative;
+  width: 100%;
+  min-height: 300px; /* 设置最小高度而非固定高度 */
+  max-height: 80vh; /* 最大高度不超过视口的80% */
+  height: auto; /* 自适应高度 */
+  background: #000;
+  aspect-ratio: 16/9; /* 保持16:9宽高比 */
+}
+
+.modalVideoIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.videoModalFooter {
+  padding: 1.2rem 1.5rem;
+  background: rgba(248, 250, 252, 0.5);
+}
+
+[data-theme='dark'] .videoModalFooter {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.videoModalFooter p {
+  margin: 0 0 0.8rem 0;
+  color: #64748b;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+[data-theme='dark'] .videoModalFooter p {
+  color: #94a3b8;
+}
+
+.videoModalMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+[data-theme='dark'] .videoModalMeta {
+  color: #94a3b8;
+}
+
+.videoModalMeta span {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+[data-theme='dark'] .videoModalMeta span {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+/* 大屏幕设备优化 (min-width: 1200px) */
+@media (min-width: 1200px) {
+  .videoContainer {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    padding: 0 2rem;
+  }
+  
+  .competitionContainer .videoContainer {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    padding: 0 2rem;
+  }
+}
+
+/* 中等屏幕设备优化 (768px - 1199px) */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .videoContainer {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+  
+  .competitionContainer .videoContainer {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+}
+
+/* 平板设备优化 (max-width: 768px) */
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .heroSubtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    padding: 0 2rem;
+  }
+
+  .primaryButton {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-width: 200px;
+  }
+
+  .sectionTitle {
+    font-size: 2.4rem;
+    margin: 3.5rem 0 2.5rem 0;
+    padding: 0 2rem;
+  }
+
+  .cardGrid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 0 2rem;
+  }
+
+  .competitionContainer h2 {
+    font-size: 1.9rem;
+    margin: 2rem 0 1.2rem 0;
+    padding: 0 2rem;
+  }
+
+  .noticeCard,
+  .trainingCard,
+  .backgroundCard,
+  .challengeCard,
+  .benefitCard,
+  .feedbackCard {
+    padding: 1.3rem;
+    margin: 1.2rem 0;
+  }
+
+  .timelineItem {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+  }
+
+  .timelineDate {
+    margin-bottom: 1.2rem;
+    margin-right: 0;
+    flex: none;
+    font-size: 0.85rem;
+    padding: 0.8rem 1.2rem;
+  }
+
+  .timelineContent {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  .timelineContent::before {
+    display: none;
+  }
+
+  .timelineContainer::before {
+    display: none;
+  }
+
+  /* 视频相关平板优化 */
+  .competitionContainer .videoThumbnail,
+  .competitionContainer .videoIframe {
+    height: 55%;
+    min-height: 180px;
+    max-height: 250px;
+  }
+
+  .videoContainer {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.2rem;
+    padding: 0 1rem;
+  }
+  
+  .competitionContainer .videoContainer {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.2rem;
+    padding: 0 1rem;
+  }
+  
+  .competitionContainer .videoCard {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 16px;
+    aspect-ratio: 16/9;
+  }
+  
+  .competitionContainer .videoInfo {
+    padding: 1rem 1.2rem; /* 平板端优化内边距 */
+    min-height: 100px; /* 平板端最小高度 */
+  }
+  
+  .competitionContainer .videoTitle {
+    font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+  }
+  
+  .competitionContainer .videoDescription {
+    font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+  }
+
+  /* 模态框平板优化 */
+  .videoModal {
+    padding: 1rem;
+  }
+
+  .videoModalContent {
+    width: 95%;
+    max-width: 600px;
+    max-height: 85vh;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .videoModalHeader {
+    padding: 1rem 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .videoModalHeader h3 {
+    font-size: 1rem;
+  }
+
+  .videoModalBody {
+    min-height: 250px; /* 平板端最小高度 */
+    max-height: 70vh; /* 平板端最大高度 */
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .modalVideoIframe {
+    height: 100%;
+  }
+
+  .videoModalFooter {
+    padding: 1rem 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .competitionContainer h1 {
+    font-size: 2.8rem;
+    padding: 0 2rem;
+  }
+
+  .competitionContainer h3 {
+    font-size: 1.4rem;
+    padding: 0 1rem;
+  }
+
+  .competitionContainer p {
+    font-size: 1.05rem;
+    padding: 0 1rem;
+    line-height: 1.7;
+  }
+}
+
+.trainingContent h4 {
+  color: #495057;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 暗模式培训内容标题 */
+[data-theme='dark'] .trainingContent h4 {
+  color: #f1f5f9;
+}
+
+.trainingContent ul {
+  margin-bottom: 1.2rem;
+}
+
+.trainingContent li {
+  margin-bottom: 0.6rem;
+  color: #6c757d;
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.95rem;
+}
+
+/* 暗模式培训内容列表 */
+[data-theme='dark'] .trainingContent li {
+  color: #cbd5e1;
+}
+
+.trainingContent li::before {
+  content: '✨';
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.trainingContent a {
+  display: inline-block;
+  background: linear-gradient(135deg, #3182ce, #2c5282);
+  color: white;
+  padding: 0.75rem 1.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 0.8rem;
+  box-shadow: 0 3px 10px rgba(49, 130, 206, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 暗模式培训内容链接 */
+[data-theme='dark'] .trainingContent a {
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  box-shadow: 0 3px 10px rgba(30, 64, 175, 0.3);
+}
+
+.trainingContent a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+.trainingContent a:hover::before {
+  left: 100%;
+}
+
+.trainingContent a:hover {
+  background: linear-gradient(135deg, #2c5282, #2a4365);
+  color: white;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+}
+
+/* 暗模式培训内容链接悬停 */
+[data-theme='dark'] .trainingContent a:hover {
+  background: linear-gradient(135deg, #1e3a8a, #1e293b);
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.5);
+}
+
+/* 时间轴容器 - 紧凑设计 */
+.scheduleSection {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  position: relative;
+}
+
+/* 暗模式时间轴区域 */
+[data-theme='dark'] .scheduleSection {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.timelineContainer {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0.8rem 0;
+}
+
+.timelineContainer::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e2e8f0;
+  transform: translateX(-50%);
+}
+
+/* 暗模式时间轴线 */
+[data-theme='dark'] .timelineContainer::before {
+  background: #475569;
+}
+
+/* 时间轴项目 - 紧凑版本 */
+.timelineItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.timelineItem:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.timelineItem:nth-child(even) .timelineContent {
+  text-align: right;
+}
+
+.timelineItem:nth-child(even) .timelineDate {
+  margin-left: 1.5rem;
+  margin-right: 0;
+}
+
+.timelineItem:nth-child(odd) .timelineDate {
+  margin-right: 1.5rem;
+}
+
+/* 时间轴日期 */
+.timelineDate {
+  flex: 0 0 110px;
+  background: linear-gradient(135deg, #3182ce, #2c5282);
+  color: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 10px rgba(49, 130, 206, 0.25);
+}
+
+/* 暗模式时间轴日期 */
+[data-theme='dark'] .timelineDate {
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.4);
+}
+
+.timelineDate:hover {
+  background: linear-gradient(135deg, #2c5282, #2a4365);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(49, 130, 206, 0.4);
+}
+
+/* 暗模式时间轴日期悬停 */
+[data-theme='dark'] .timelineDate:hover {
+  background: linear-gradient(135deg, #1e3a8a, #1e293b);
+  box-shadow: 0 6px 20px rgba(30, 64, 175, 0.5);
+}
+
+/* 时间轴内容 - 紧凑版本 */
+.timelineContent {
+  flex: 1;
+  background: #ffffff;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 暗模式时间轴内容 */
+[data-theme='dark'] .timelineContent {
+  background: #1e293b;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.2);
+}
+
+.timelineContent:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: rgba(49, 130, 206, 0.3);
+}
+
+/* 暗模式时间轴内容悬停 */
+[data-theme='dark'] .timelineContent:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.timelineContent::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: #3182ce;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+/* 暗模式时间轴圆点 */
+[data-theme='dark'] .timelineContent::before {
+  background: #3b82f6;
+}
+
+.timelineItem:nth-child(odd) .timelineContent::before {
+  left: -10px;
+}
+
+.timelineItem:nth-child(even) .timelineContent::before {
+  right: -10px;
+}
+
+/* 时间轴图标 - 紧凑版本 */
+.timelineIcon {
+  display: inline-block;
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
+  color: #3182ce;
+  line-height: 1;
+}
+
+.timelineContent h3 {
+  color: #2d3748;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.2rem 0 0.4rem 0;
+  line-height: 1.2;
+}
+
+.timelineContent p {
+  color: #4a5568;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* 暗模式时间轴文本 */
+[data-theme='dark'] .timelineIcon {
+  color: #60a5fa;
+}
+
+[data-theme='dark'] .timelineContent h3 {
+  color: #f1f5f9;
+}
+
+[data-theme='dark'] .timelineContent p {
+  color: #cbd5e1;
+}
+
+/* 背景介绍 - 紧凑设计 */
+.backgroundSection {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f1f5f9 100%);
+  position: relative;
+}
+
+/* 暗模式背景区域 */
+[data-theme='dark'] .backgroundSection {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.backgroundContent {
+  margin-top: 0.8rem;
+}
+
+.backgroundContent p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+  margin-bottom: 1rem;
+  padding: 1.2rem;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+/* 暗模式背景内容 */
+[data-theme='dark'] .backgroundContent p {
+  color: #cbd5e1;
+  background: #1e293b;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.backgroundContent p:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 赛题区域 - 紧凑设计 */
+.topicsSection {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  position: relative;
+}
+
+/* 暗模式赛题区域 */
+[data-theme='dark'] .topicsSection {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+}
+
+.topicsIntro {
+  font-size: 1rem;
+  color: #4a5568;
+  margin-bottom: 1.8rem;
+  text-align: center;
+  font-weight: 500;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+/* 暗模式赛题介绍 */
+[data-theme='dark'] .topicsIntro {
+  background: #1e293b;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  color: #cbd5e1;
+}
+
+.topicCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 暗模式赛题卡片 */
+[data-theme='dark'] .topicCard {
+  background: #1e293b;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.topicCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #3182ce;
+}
+
+.topicCard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  border-color: #cbd5e0;
+}
+
+.topicCard h3 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.6rem;
+  position: relative;
+}
+
+.topicContent p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.topicContent h4 {
+  color: #2d3748;
+  margin-bottom: 0.6rem;
+  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.topicContent ul {
+  margin-bottom: 0.8rem;
+}
+
+.topicContent li {
+  color: #4a5568;
+  margin-bottom: 0.6rem;
+  line-height: 1.6;
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+/* 暗模式赛题卡片文本 */
+[data-theme='dark'] .topicCard h3 {
+  color: #f1f5f9;
+  border-bottom: 2px solid rgba(71, 85, 105, 0.6);
+}
+
+[data-theme='dark'] .topicContent p,
+[data-theme='dark'] .topicContent li {
+  color: #cbd5e1;
+}
+
+[data-theme='dark'] .topicContent h4 {
+  color: #f1f5f9;
+}
+
+/* 福利区域 - 现代设计 */
+.benefitsSection {
+  background: linear-gradient(135deg, #f0fdf4 0%, #f7fafc 100%);
+  position: relative;
+}
+
+/* 暗模式福利区域 */
+[data-theme='dark'] .benefitsSection {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-top: 1px solid rgba(71, 85, 105, 0.3);
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.benefitCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* 暗模式福利卡片 */
+[data-theme='dark'] .benefitCard {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.benefitCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #38a169;
+}
+
+/* 暗模式福利卡片顶部装饰 */
+[data-theme='dark'] .benefitCard::before {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.benefitCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 暗模式福利卡片悬停 */
+[data-theme='dark'] .benefitCard:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.benefitCard h3 {
+  color: #2d3748;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* 暗模式福利卡片标题 */
+[data-theme='dark'] .benefitCard h3 {
+  color: #f1f5f9;
+}
+
+.benefitCard p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+}
+
+/* 暗模式福利卡片文本 */
+[data-theme='dark'] .benefitCard p {
+  color: #cbd5e1;
+}
+
+.benefitCard strong {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+/* 暗模式福利卡片强调文本 */
+[data-theme='dark'] .benefitCard strong {
+  color: #f1f5f9;
+}
+
+/* 反馈区域 - 现代设计 */
+.feedbackSection {
+  background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
+  text-align: center;
+  position: relative;
+}
+
+/* 暗模式反馈区域 */
+[data-theme='dark'] .feedbackSection {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-top: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.contactInfo {
+  margin-top: 1.2rem;
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 暗模式联系信息 */
+[data-theme='dark'] .contactInfo {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contactInfo:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.contactInfo:hover .wechatQrCode {
+  transform: scale(1.02);
+}
+
+/* 暗模式联系信息悬停 */
+[data-theme='dark'] .contactInfo:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* 响应式设计 - 微信二维码容器 */
+@media (max-width: 768px) {
+  .contactInfo {
+    padding: 1rem;
+    max-width: 280px;
+    margin: 1rem auto;
+  }
+  
+  .wechatQrCode {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactInfo {
+    padding: 0.8rem;
+    max-width: 220px;
+  }
+  
+  .wechatQrCode {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+.contactInfo p {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* 暗模式联系信息文本 */
+[data-theme='dark'] .contactInfo p {
+  color: #f1f5f9;
+}
+
+/* 通用标题样式 - 紧凑设计 */
+.sectionTitle {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 2.5rem 0 2rem 0;
+  color: #1e293b;
+  position: relative;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* 暗模式通用标题 */
+[data-theme='dark'] .sectionTitle {
+  color: #f1f5f9;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* 暗模式标题装饰线 */
+[data-theme='dark'] .sectionTitle::after {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+}
+
+/* 模块化段落文本样式 - 紧凑版本 */
+.competitionContainer p {
+  line-height: 1.6;
+  color: #475569;
+  font-size: 0.95rem;
+  margin-bottom: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* 暗模式段落文本 */
+[data-theme='dark'] .competitionContainer p {
+  color: #cbd5e1;
+}
+
+/* 模块化列表样式 - 紧凑版本 */
+.competitionContainer ul {
+  line-height: 1.6;
+  margin: 0.6rem 0;
+  padding-left: 1.4rem;
+}
+
+.competitionContainer li {
+  margin-bottom: 0.3rem;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* 暗模式列表项 */
+[data-theme='dark'] .competitionContainer li {
+  color: #cbd5e1;
+}
+
+/* 模块化标题层次 - 仅作用于大赛页面 */
+.competitionContainer h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  letter-spacing: -0.025em;
+}
+
+/* 暗模式h1标题 */
+[data-theme='dark'] .competitionContainer h1 {
+  color: #f1f5f9;
+}
+
+.competitionContainer h2 {
+  color: #1e293b;
+  font-size: 2rem;
+  margin: 1.5rem 0 1.2rem 0;
+  text-align: center;
+  position: relative;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* 暗模式h2标题 */
+[data-theme='dark'] .competitionContainer h2 {
+  color: #f1f5f9;
+}
+
+.competitionContainer h2::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+/* 暗模式h2标题装饰线 */
+[data-theme='dark'] .competitionContainer h2::after {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  box-shadow: 0 2px 6px rgba(96, 165, 250, 0.4);
+}
+
+.competitionContainer h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 1.2rem 0 1rem 0;
+  color: #1e293b;
+  letter-spacing: -0.01em;
+}
+
+/* 暗模式h3标题 */
+[data-theme='dark'] .competitionContainer h3 {
+  color: #f1f5f9;
+}
+
+.competitionContainer h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 1rem 0 0.8rem 0;
+  color: #374151;
+  letter-spacing: -0.005em;
+}
+
+/* 暗模式h4标题 */
+[data-theme='dark'] .competitionContainer h4 {
+  color: #e5e7eb;
+}
+
+/* 响应式设计 - 优化移动端体验 */
+@media (max-width: 1024px) {
+  .heroSection {
+    padding: 100px 0 80px;
+    min-height: 60vh;
+  }
+  
+  .heroTitle {
+    font-size: 4rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    padding: 80px 0 60px;
+    min-height: 50vh;
+  }
+  
+  .heroTitle {
+    font-size: 3.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .primaryButton {
+    padding: 16px 32px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .heroSection h1 {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .heroSection p {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  /* 平板设备视频卡片优化 */
+  .competitionContainer .videoContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .competitionContainer .videoCard {
+    aspect-ratio: 4/3;
+  }
+
+  .competitionContainer .videoThumbnail {
+    aspect-ratio: 16/9;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    padding: 60px 0 40px;
+    min-height: 45vh;
+  }
+  
+  .heroTitle {
+    font-size: 2.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.375rem;
+    margin-bottom: 1.5rem;
+    padding: 0 1.5rem;
+  }
+  
+  .primaryButton {
+    padding: 14px 28px;
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+  
+  /* 移除动画效果 */
+  .heroSection::before {
+    animation: none;
+  }
+
+  .noticeCard,
+  .trainingCard,
+  .backgroundCard,
+  .challengeCard,
+  .benefitCard {
+    margin: 1rem 0;
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+
+  .challengeGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .benefitGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .timelineContainer {
+    padding: 0.6rem 0;
+  }
+
+  .timelineItem {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1rem;
+  }
+
+  .timelineDate {
+    flex: none;
+    margin: 0 0 0.6rem 0;
+    align-self: flex-start;
+    width: 90px;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .timelineContent {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+  }
+
+  .timelineContent h3 {
+    font-size: 0.95rem;
+    margin: 0.1rem 0 0.3rem 0;
+  }
+
+  .timelineContent p {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+
+  .timelineIcon {
+    font-size: 1.1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .timelineItem:nth-child(even) .timelineDate,
+  .timelineItem:nth-child(odd) .timelineDate {
+    margin: 0 0 0.6rem 0;
+  }
+
+  .trainingContent a {
+    width: 100%;
+    text-align: center;
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .sectionTitle {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .challengeCard h3,
+  .benefitCard h3 {
+    font-size: 1.3rem;
+  }
+
+  .challengeCard p,
+  .benefitCard p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+  }
+
+  .heroSubtitle {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    padding: 0 1rem;
+  }
+
+  .primaryButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+
+  .noticeSection,
+  .trainingSection,
+  .scheduleSection,
+  .backgroundSection,
+  .topicsSection,
+  .benefitsSection,
+  .feedbackSection {
+    padding: 2rem 0;
+  }
+
+  .competitionContainer h2 {
+    font-size: 1.7rem;
+    margin: 2rem 0 1.2rem 0;
+    padding: 0 1rem;
+  }
+
+  .noticeCard,
+  .trainingCard,
+  .backgroundCard,
+  .challengeCard,
+  .benefitCard,
+  .feedbackCard {
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+  }
+
+  .cardIcon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+
+  .cardHeader h3 {
+    font-size: 1.3rem;
+  }
+
+  .timelineItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .timelineDate {
+    margin-bottom: 1rem;
+    margin-right: 0;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    flex: none;
+    width: auto;
+  }
+
+  .timelineContent {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  .timelineContent h3 {
+    font-size: 1.2rem;
+  }
+
+  .timelineContent p {
+    font-size: 0.9rem;
+  }
+
+  .trainingContent a {
+    width: 100%;
+    text-align: center;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    max-width: 280px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .backgroundContent p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* 视频容器手机端优化 */
+  .videoContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+  
+  .competitionContainer .videoContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+  
+  /* 视频相关响应式优化 */
+  .competitionContainer .videoCard {
+    margin: 0;
+    border-radius: 12px;
+    max-width: 100%;
+    width: 100%;
+    /* 移除固定比例限制，让内容自然适应 */
+    min-height: 280px; /* 手机端适当减小最小高度 */
+  }
+
+  .competitionContainer .videoThumbnail {
+    aspect-ratio: 16/9; /* 保持标准视频比例 */
+    border-radius: 12px 12px 0 0;
+  }
+
+  .competitionContainer .videoIframe {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .competitionContainer .videoInfo {
+    padding: 0.8rem 1rem; /* 手机端适当减少内边距但保持足够空间 */
+    min-height: 90px; /* 手机端最小高度 */
+  }
+
+  .competitionContainer .videoTitle {
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    -webkit-line-clamp: 3; /* 手机端也增加到3行 */
+    margin-bottom: 0.5rem;
+  }
+
+  .competitionContainer .videoDescription {
+    font-size: clamp(0.75rem, 1.5vw, 0.8rem);
+    -webkit-line-clamp: 3; /* 手机端增加到3行 */
+  }
+
+  /* 模态框响应式优化 */
+  .videoModal {
+    padding: 0.5rem;
+  }
+
+  .videoModalContent {
+    width: 98%;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .videoModalHeader {
+    padding: 0.75rem 1rem;
+    flex-shrink: 0;
+  }
+
+  .videoModalHeader h3 {
+    font-size: 0.95rem;
+  }
+
+  .videoModalBody {
+    min-height: 200px; /* 手机端最小高度 */
+    max-height: 60vh; /* 手机端最大高度 */
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .modalVideoIframe {
+    height: 100%;
+  }
+
+  .videoModalFooter {
+    padding: 0.75rem 1rem;
+    flex-shrink: 0;
+  }
+
+  .videoModalFooter p {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .videoModalMeta {
+    font-size: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .videoModalMeta span {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  .sectionTitle {
+    font-size: 2.2rem;
+    margin: 3rem 0 2rem 0;
+    padding: 0 1rem;
+  }
+
+  .competitionContainer h1 {
+    font-size: 2.4rem;
+    padding: 0 1rem;
+  }
+
+  .competitionContainer h3 {
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+  }
+
+  .competitionContainer p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0 0.5rem;
+  }
+
+  .timelineContainer {
+    padding: 0 1.5rem;
+  }
+
+  .heroTitle {
+    font-size: 2rem;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.02em;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    padding: 0 1rem;
+  }
+
+  .primaryButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    border-radius: 10px;
+  }
+
+  .noticeSection,
+  .trainingSection,
+  .scheduleSection,
+  .backgroundSection,
+  .topicsSection,
+  .benefitsSection,
+  .feedbackSection {
+    padding: 2rem 0;
+  }
+
+  .competitionContainer h2 {
+    font-size: 1.7rem;
+    margin: 2rem 0 1.2rem 0;
+    padding: 0 1rem;
+  }
+
+  .noticeCard,
+  .trainingCard,
+  .backgroundCard,
+  .challengeCard,
+  .benefitCard,
+  .feedbackCard {
+    padding: 1.5rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+  }
+
+  .cardIcon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+
+  .cardHeader h3 {
+    font-size: 1.3rem;
+  }
+
+  .timelineItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .timelineDate {
+    margin-bottom: 1rem;
+    margin-right: 0;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+    flex: none;
+    width: auto;
+  }
+
+  .timelineContent {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  .timelineContent h3 {
+    font-size: 1.2rem;
+  }
+
+  .timelineContent p {
+    font-size: 0.9rem;
+  }
+
+  .trainingContent a {
+    width: 100%;
+    text-align: center;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    max-width: 280px;
+    margin: 0 auto;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .backgroundContent p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* 视频相关响应式优化 */
+  .competitionContainer .videoCard {
+    margin: 1.5rem 0;
+    border-radius: 12px;
+  }
+
+  .competitionContainer .videoThumbnail {
+    height: 200px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .competitionContainer .videoInfo {
+    padding: 1.25rem;
+  }
+
+  .competitionContainer .videoTitle {
+    font-size: 1.1rem;
+  }
+
+  .competitionContainer .videoDescription {
+    font-size: 0.85rem;
+  }
+
+  /* 模态框响应式优化 */
+  .videoModal {
+    padding: 1rem;
+  }
+
+  .videoModalContent {
+    border-radius: 12px;
+  }
+
+  .videoModalHeader {
+    padding: 1rem 1.25rem;
+  }
+
+  .videoModalHeader h3 {
+    font-size: 1.1rem;
+  }
+
+  .videoModalBody {
+    height: 220px;
+  }
+
+  .videoModalFooter {
+    padding: 1rem 1.25rem;
+  }
+
+  .sectionTitle {
+    font-size: 2.2rem;
+    margin: 3rem 0 2rem 0;
+    padding: 0 1rem;
+  }
+
+  .competitionContainer h1 {
+    font-size: 2.4rem;
+    padding: 0 1rem;
+  }
+
+  .competitionContainer h3 {
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+  }
+
+  .competitionContainer p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding: 0 0.5rem;
+  }
+
+  .timelineContainer {
+    padding: 0 1.5rem;
+  }
+}
+
+/* 移除滚动动画以提升性能 */
+.competitionContainer > section {
+  opacity: 1;
+}
+
+/* 奖项设置样式 - 卡片式设计 */
+.awardsSection {
+  padding: var(--section-spacing) 0;
+  position: relative;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  overflow: hidden;
+}
+
+[data-theme='dark'] .awardsSection {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* 奖项网格布局 - 水平排列 */
+.awardsGrid {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  flex-wrap: wrap;
+}
+
+/* 奖项卡片基础样式 - 扁平化设计 */
+.awardCard {
+  position: relative;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s ease;
+  /* 水平布局样式 */
+  flex: 1;
+  min-width: 280px;
+  max-width: 320px;
+}
+
+[data-theme='dark'] .awardCard {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+/* 卡片悬停效果 - 简化 */
+.awardCard:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] .awardCard:hover {
+  border-color: #475569;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 一等奖特殊样式 - 清新雅致配色 */
+.firstPrize {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+}
+
+[data-theme='dark'] .firstPrize {
+  background: linear-gradient(135deg, #1e1b16 0%, #292524 100%);
+  border-color: #eab308;
+  box-shadow: 0 2px 8px rgba(234, 179, 8, 0.2);
+}
+
+.firstPrize:hover {
+  border-color: #d97706;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+[data-theme='dark'] .firstPrize:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+/* 二等奖样式 - 清新雅致配色 */
+.secondPrize {
+  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+  border-color: #0ea5e9;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
+}
+
+[data-theme='dark'] .secondPrize {
+  background: linear-gradient(135deg, #0c1821 0%, #1e293b 100%);
+  border-color: #38bdf8;
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
+}
+
+.secondPrize:hover {
+  border-color: #0284c7;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+}
+
+[data-theme='dark'] .secondPrize:hover {
+  border-color: #7dd3fc;
+  box-shadow: 0 4px 12px rgba(125, 211, 252, 0.3);
+}
+
+/* 三等奖样式 - 清新雅致配色 */
+.thirdPrize {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #22c55e;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+}
+
+[data-theme='dark'] .thirdPrize {
+  background: linear-gradient(135deg, #0f1b0f 0%, #1a2e1a 100%);
+  border-color: #4ade80;
+  box-shadow: 0 2px 8px rgba(74, 222, 128, 0.2);
+}
+
+.thirdPrize:hover {
+  border-color: #16a34a;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+
+[data-theme='dark'] .thirdPrize:hover {
+  border-color: #86efac;
+  box-shadow: 0 4px 12px rgba(134, 239, 172, 0.3);
+}
+
+/* 优秀奖样式 - 清新雅致配色 */
+.excellentPrize {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-color: #a855f7;
+  box-shadow: 0 2px 8px rgba(168, 85, 247, 0.15);
+}
+
+[data-theme='dark'] .excellentPrize {
+  background: linear-gradient(135deg, #1e1b2e 0%, #2d1b69 100%);
+  border-color: #c084fc;
+  box-shadow: 0 2px 8px rgba(192, 132, 252, 0.2);
+}
+
+.excellentPrize:hover {
+  border-color: #9333ea;
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
+}
+
+[data-theme='dark'] .excellentPrize:hover {
+  border-color: #ddd6fe;
+  box-shadow: 0 4px 12px rgba(221, 214, 254, 0.3);
+}
+
+/* 奖项头部 - 扁平化 */
+.awardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.awardIcon {
+  font-size: 2.5rem;
+}
+
+.awardRank {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+[data-theme='dark'] .awardRank {
+  color: #f9fafb;
+}
+
+/* 奖项内容 - 扁平化 */
+.awardContent {
+  text-align: center;
+}
+
+.awardMoney {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 1rem;
+  text-shadow: 0 1px 2px rgba(30, 64, 175, 0.1);
+}
+
+[data-theme='dark'] .awardMoney {
+  color: #60a5fa;
+  text-shadow: 0 1px 2px rgba(96, 165, 250, 0.2);
+}
+
+/* 一等奖金额特殊颜色 */
+.firstPrize .awardMoney {
+  color: #d97706;
+}
+
+[data-theme='dark'] .firstPrize .awardMoney {
+  color: #fbbf24;
+}
+
+/* 二等奖金额特殊颜色 */
+.secondPrize .awardMoney {
+  color: #0284c7;
+}
+
+[data-theme='dark'] .secondPrize .awardMoney {
+  color: #38bdf8;
+}
+
+/* 三等奖金额特殊颜色 */
+.thirdPrize .awardMoney {
+  color: #16a34a;
+}
+
+[data-theme='dark'] .thirdPrize .awardMoney {
+  color: #4ade80;
+}
+
+/* 优秀奖金额特殊颜色 */
+.excellentPrize .awardMoney {
+  color: #9333ea;
+}
+
+[data-theme='dark'] .excellentPrize .awardMoney {
+  color: #c084fc;
+}
+
+.awardDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.awardQuota,
+.awardRequirement {
+  font-size: 1rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+[data-theme='dark'] .awardQuota,
+[data-theme='dark'] .awardRequirement {
+  color: #d1d5db;
+}
+
+/* 一等奖徽章 - 清新雅致配色 */
+.awardBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] .awardBadge {
+  background: linear-gradient(135deg, #eab308 0%, #f59e0b 100%);
+  box-shadow: 0 2px 6px rgba(234, 179, 8, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 响应式设计 - 优化水平布局 */
+@media (max-width: 1200px) {
+  .awardsGrid {
+    gap: 1rem;
+  }
+  
+  .awardCard {
+    min-width: 250px;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .awardsGrid {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0.5rem;
+  }
+  
+  .awardCard {
+    flex: none;
+    width: 100%;
+    max-width: 400px;
+    min-width: auto;
+    padding: 1.5rem;
+  }
+  
+  .awardIcon {
+    font-size: 2rem;
+  }
+  
+  .awardRank {
+    font-size: 1.25rem;
+  }
+  
+  .awardMoney {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .awardCard {
+    padding: 1.25rem;
+  }
+  
+  .awardIcon {
+    font-size: 1.8rem;
+  }
+  
+  .awardMoney {
+    font-size: 1.6rem;
+  }
+  
+  .awardQuota,
+  .awardRequirement {
+    font-size: 0.9rem;
+  }
+}
+
+/* ========================================
+   晋级决赛名单表格样式 - 现代化设计
+   ======================================== */
+
+/* 表格容器 - 提供整体布局和响应式支持 */
+.finalistTable {
+  width: 100%;                    /* 全宽显示 */
+  margin: 2rem 0;                 /* 上下边距，与其他内容保持间距 */
+  overflow-x: auto;               /* 水平滚动支持，适配小屏幕 */
+  border-radius: 12px;            /* 圆角边框，现代化外观 */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);  /* 轻微阴影，增加层次感 */
+  background: var(--terminal-bg-secondary);     /* 使用主题背景色 */
+  border: 1px solid var(--terminal-border-primary);  /* 主题边框色 */
+  position: relative;             /* 为伪元素提供定位上下文 */
+}
+
+/* 暗色模式表格容器适配 */
+[data-theme='dark'] .finalistTable {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);   /* 暗色模式下增强阴影 */
+}
+
+/* 表格本体 - 基础布局设置 */
+.finalistTable table {
+  width: 100% !important;         /* 强制表格占满容器宽度 */
+  border-collapse: collapse;      /* 合并边框，避免双重边框 */
+  margin: 0;                      /* 移除默认边距 */
+  font-family: var(--terminal-font-family);  /* 使用主题字体 */
+  background: transparent;        /* 透明背景，继承容器背景 */
+  table-layout: fixed !important; /* 强制固定表格布局，确保列宽按设定比例分配 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 使用更高优先级的选择器强制表格宽度 */
+.competitionContainer .finalistTable table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  min-width: 100% !important;
+}
+
+/* 最高优先级选择器 - 确保表格完全占满宽度 */
+.competitionContainer .finalistTable table,
+.competitionContainer .finalistTable table tbody,
+.competitionContainer .finalistTable table thead {
+  width: 100% !important;
+  display: table !important;
+}
+
+.competitionContainer .finalistTable table tr {
+  width: 100% !important;
+  display: table-row !important;
+}
+
+.competitionContainer .finalistTable table th,
+.competitionContainer .finalistTable table td {
+  display: table-cell !important;
+  box-sizing: border-box !important;
+}
+
+/* 强制列宽分配 - 最高优先级 */
+.competitionContainer .finalistTable table th:first-child,
+.competitionContainer .finalistTable table td:first-child {
+  width: 20% !important;
+  min-width: 80px !important;
+  max-width: 20% !important;
+}
+
+.competitionContainer .finalistTable table th:last-child,
+.competitionContainer .finalistTable table td:last-child {
+  width: 80% !important;
+  max-width: 80% !important;
+}
+
+/* 表头样式 - 突出显示和现代化设计 */
+.finalistTable th {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);  /* 蓝色渐变背景 */
+  color: #ffffff;                 /* 白色文字，确保对比度 */
+  font-weight: 600;               /* 中等粗细字体 */
+  font-size: 1.1rem;              /* 稍大字体尺寸 */
+  padding: 1.25rem 1.5rem;        /* 充足的内边距 */
+  text-align: center;             /* 文本居中对齐 */
+  text-transform: uppercase;      /* 大写字母，增强视觉层次 */
+  letter-spacing: 0.05em;         /* 字母间距，提升可读性 */
+  border: none;                   /* 移除默认边框 */
+  position: relative;             /* 为伪元素提供定位 */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);  /* 文字阴影，增加深度 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 暗色模式表头适配 */
+[data-theme='dark'] .finalistTable th {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);  /* 暗色模式渐变 */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);  /* 增强文字阴影 */
+}
+
+/* 表头第一个单元格 - 左上角圆角 + 序号列宽度 */
+.finalistTable th:first-child {
+  border-top-left-radius: 11px;   /* 与容器圆角保持一致 */
+  width: 20% !important;          /* 强制序号列占20%宽度 */
+  min-width: 80px;                /* 最小宽度保证可读性 */
+  max-width: 20%;                 /* 最大宽度限制 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 表头最后一个单元格 - 右上角圆角 + 队伍名称列宽度 */
+.finalistTable th:last-child {
+  border-top-right-radius: 11px;  /* 与容器圆角保持一致 */
+  width: 80% !important;          /* 强制队伍名称列占80%宽度 */
+  max-width: 80%;                 /* 最大宽度限制 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 使用更高优先级的选择器强制表头列宽 */
+.competitionContainer .finalistTable th:first-child {
+  width: 20% !important;
+  min-width: 80px !important;
+  max-width: 20% !important;
+}
+
+.competitionContainer .finalistTable th:last-child {
+  width: 80% !important;
+  max-width: 80% !important;
+}
+
+/* 表格单元格样式 - 清晰的内容展示 */
+.finalistTable td {
+  padding: 1rem 1.5rem;           /* 适中的内边距 */
+  text-align: center;             /* 文本居中对齐 */
+  font-size: 1rem;                /* 标准字体大小 */
+  font-weight: 500;               /* 中等字重 */
+  color: var(--terminal-text-primary);     /* 主题主文本色 */
+  border-bottom: 1px solid var(--terminal-border-primary);  /* 底部边框分隔 */
+  transition: all 0.2s ease;      /* 平滑过渡效果 */
+  position: relative;             /* 为悬停效果提供定位 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 序号列样式 - 特殊强调 + 宽度控制 */
+.finalistTable td:first-child {
+  font-weight: 700;               /* 粗体字重 */
+  color: var(--terminal-accent-blue);      /* 使用主题强调色 */
+  font-size: 1.1rem;              /* 稍大字体 */
+  width: 20% !important;          /* 强制序号列占20%宽度，与表头保持一致 */
+  min-width: 80px;                /* 最小宽度保证可读性 */
+  max-width: 20%;                 /* 最大宽度限制 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 队伍名称列样式 - 左对齐显示 + 宽度控制 */
+.finalistTable td:last-child {
+  text-align: left;               /* 左对齐，便于阅读长文本 */
+  font-weight: 600;               /* 稍粗字体，突出队伍名称 */
+  width: 80% !important;          /* 强制队伍名称列占80%宽度，与表头保持一致 */
+  max-width: 80%;                 /* 最大宽度限制 */
+  box-sizing: border-box;         /* 包含边框和内边距在宽度计算中 */
+}
+
+/* 使用更高优先级的选择器强制单元格列宽 */
+.competitionContainer .finalistTable td:first-child {
+  width: 20% !important;
+  min-width: 80px !important;
+  max-width: 20% !important;
+}
+
+.competitionContainer .finalistTable td:last-child {
+  width: 80% !important;
+  max-width: 80% !important;
+}
+
+/* 表格行样式 - 斑马纹效果和交互反馈 */
+.finalistTable tbody tr {
+  background: transparent;        /* 默认透明背景 */
+  transition: all 0.2s ease;      /* 平滑过渡动画 */
+  position: relative;             /* 为伪元素提供定位 */
+}
+
+/* 偶数行背景色 - 斑马纹效果 */
+.finalistTable tbody tr:nth-child(even) {
+  background: rgba(59, 130, 246, 0.03);    /* 极淡的蓝色背景 */
+}
+
+/* 暗色模式偶数行适配 */
+[data-theme='dark'] .finalistTable tbody tr:nth-child(even) {
+  background: rgba(96, 165, 250, 0.05);    /* 暗色模式下的淡蓝背景 */
+}
+
+/* 行悬停效果 - 增强用户交互体验 */
+.finalistTable tbody tr:hover {
+  background: rgba(59, 130, 246, 0.08);    /* 悬停时的蓝色背景 */
+  transform: translateY(-1px);             /* 轻微上移效果 */
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);  /* 悬停阴影 */
+}
+
+/* 暗色模式行悬停适配 */
+[data-theme='dark'] .finalistTable tbody tr:hover {
+  background: rgba(96, 165, 250, 0.12);    /* 暗色模式悬停背景 */
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);   /* 暗色模式悬停阴影 */
+}
+
+/* 悬停时单元格文字效果 */
+.finalistTable tbody tr:hover td {
+  color: var(--terminal-text-primary);     /* 保持文字颜色一致 */
+}
+
+/* 悬停时序号列特殊效果 */
+.finalistTable tbody tr:hover td:first-child {
+  color: #1e40af;                 /* 悬停时序号变为深蓝色 */
+  font-weight: 800;               /* 增加字重 */
+}
+
+/* 暗色模式悬停序号适配 */
+[data-theme='dark'] .finalistTable tbody tr:hover td:first-child {
+  color: #60a5fa;                 /* 暗色模式悬停序号色 */
+}
+
+/* 最后一行特殊处理 - 底部圆角 */
+.finalistTable tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 11px;  /* 左下角圆角 */
+}
+
+.finalistTable tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 11px; /* 右下角圆角 */
+}
+
+.finalistTable tbody tr:last-child td {
+  border-bottom: none;            /* 最后一行移除底部边框 */
+}
+
+/* ========================================
+   决赛公示获奖名单表格样式
+   ======================================== */
+
+.resultTable {
+  width: 100%;
+  margin: 2rem 0;
+  overflow-x: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--terminal-bg-secondary);
+  border: 1px solid var(--terminal-border-primary);
+}
+
+.resultTable table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-family: var(--terminal-font-family);
+}
+
+/* 结果表格强制全宽与固定布局，避免被全局样式影响 */
+.competitionContainer .resultTable table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  min-width: 100% !important;
+}
+
+.competitionContainer .resultTable table thead,
+.competitionContainer .resultTable table tbody {
+  width: 100% !important;
+  display: table !important;
+}
+
+.competitionContainer .resultTable table tr {
+  width: 100% !important;
+  display: table-row !important;
+}
+
+.competitionContainer .resultTable table th,
+.competitionContainer .resultTable table td {
+  display: table-cell !important;
+  box-sizing: border-box !important;
+}
+
+.resultTable th {
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 1rem 1rem;
+  text-align: center;
+  border: none;
+}
+
+[data-theme='dark'] .resultTable th {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+.resultTable td {
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+  color: var(--terminal-text-primary);
+  border-bottom: 1px solid var(--terminal-border-primary);
+}
+
+.resultTable tbody tr:nth-child(even) {
+  background: rgba(59, 130, 246, 0.03);
+}
+
+[data-theme='dark'] .resultTable tbody tr:nth-child(even) {
+  background: rgba(96, 165, 250, 0.05);
+}
+
+/* 列宽与对齐 */
+.resultTable th:nth-child(1),
+.resultTable td:nth-child(1) {
+  width: 8%;
+  min-width: 60px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--terminal-accent-blue);
+}
+
+.resultTable th:nth-child(2),
+.resultTable td:nth-child(2) {
+  width: 18%;
+  min-width: 140px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.resultTable th:nth-child(3),
+.resultTable td:nth-child(3) {
+  width: 54%;
+  min-width: 260px;
+  text-align: left;
+  word-break: break-all;
+}
+
+.resultTable th:nth-child(4),
+.resultTable td:nth-child(4) {
+  width: 20%;
+  min-width: 120px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.repoLink {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.repoLink:hover {
+  text-decoration: underline;
+}
+
+/* 仓库链接单元格交互样式 */
+.repoCell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repoLinkBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  border-radius: 8px;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.repoLinkBtn:hover {
+  background: rgba(37, 99, 235, 0.15);
+  text-decoration: none;
+}
+
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.6rem;
+  background: rgba(15, 23, 42, 0.06);
+  color: #334155;
+  border-radius: 8px;
+  border: 1px solid rgba(51, 65, 85, 0.25);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.copyBtn:hover {
+  background: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme='dark'] .repoLinkBtn {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+[data-theme='dark'] .copyBtn {
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* 奖项标签样式 */
+.awardTag {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.firstAward {
+  background: linear-gradient(135deg, #fde68a 0%, #f59e0b 100%);
+  color: #1f2937;
+}
+
+.secondAward {
+  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+  color: #111827;
+}
+
+.thirdAward {
+  background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
+  color: #111827;
+}
+
+.excellentAward {
+  background: linear-gradient(135deg, #ddd6fe 0%, #a78bfa 100%);
+  color: #111827;
+}
+
+/* ========================================
+   响应式设计 - 移动设备优化
+   ======================================== */
+
+/* 平板设备适配 */
+@media (max-width: 768px) {
+  .finalistTable {
+    margin: 1.5rem 0;             /* 减少上下边距 */
+    border-radius: 8px;           /* 减小圆角 */
+  }
+  
+  .finalistTable th,
+  .finalistTable td {
+    padding: 0.875rem 1rem;       /* 减少内边距 */
+    font-size: 0.95rem;           /* 稍小字体 */
+  }
+  
+  .finalistTable th {
+    font-size: 1rem;              /* 表头字体调整 */
+  }
+  
+  .finalistTable td:first-child {
+    font-size: 1rem;              /* 序号列字体调整 */
+  }
+}
+
+/* 手机设备适配 */
+@media (max-width: 480px) {
+  .finalistTable {
+    margin: 1rem 0;               /* 进一步减少边距 */
+    border-radius: 6px;           /* 更小圆角 */
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);  /* 减小阴影 */
+  }
+  
+  .finalistTable th,
+  .finalistTable td {
+    padding: 0.75rem 0.5rem;      /* 最小内边距 */
+    font-size: 0.9rem;            /* 小字体 */
+  }
+  
+  .finalistTable th {
+    font-size: 0.95rem;           /* 表头小字体 */
+    letter-spacing: 0.03em;       /* 减少字母间距 */
+  }
+  
+  .finalistTable td:first-child {
+    font-size: 0.95rem;           /* 序号列小字体 */
+  }
+  
+  /* 移动设备上减少悬停效果的视觉干扰 */
+  .finalistTable tbody tr:hover {
+    transform: none;              /* 移除上移效果 */
+    box-shadow: 0 1px 4px rgba(59, 130, 246, 0.1);  /* 减小悬停阴影 */
+  }
+  
+  [data-theme='dark'] .finalistTable tbody tr:hover {
+    box-shadow: 0 1px 4px rgba(96, 165, 250, 0.15); /* 暗色模式减小阴影 */
+  }
+}
+
+/* 超小屏幕设备适配 */
+@media (max-width: 360px) {
+  .finalistTable th,
+  .finalistTable td {
+    padding: 0.625rem 0.375rem;   /* 最小化内边距 */
+    font-size: 0.85rem;           /* 最小字体 */
+  }
+  
+  .finalistTable th {
+    font-size: 0.9rem;            /* 表头最小字体 */
+  }
+}
+
+/* ========================================
+   Hero Section 响应式设计
+   ======================================== */
+
+/* 移动设备优化 - 调整背景图片显示 */
+@media (max-width: 768px) {
+  .heroSection {
+    background-attachment: scroll;  /* 移动设备上使用滚动背景，避免性能问题 */
+    min-height: 60vh;  /* 减少最小高度，适应小屏幕 */
+    padding: 80px 0 60px;  /* 减少内边距 */
+  }
+  
+  .heroTitle {
+    font-size: 3rem;  /* 减小标题字体 */
+  }
+  
+  .heroSubtitle {
+    font-size: 1.5rem;  /* 减小副标题字体 */
+    margin-bottom: 2rem;  /* 减少下边距 */
+  }
+}
+
+@media (max-width: 480px) {
+  .heroSection {
+    min-height: 50vh;  /* 进一步减少最小高度 */
+    padding: 60px 0 40px;  /* 进一步减少内边距 */
+  }
+  
+  .heroTitle {
+    font-size: 2.5rem;  /* 小屏幕下的标题字体 */
+    line-height: 1.2;  /* 调整行高 */
+  }
+  
+  .heroSubtitle {
+    font-size: 1.25rem;  /* 小屏幕下的副标题字体 */
+  }
+  
+  .heroActions {
+    flex-direction: column;  /* 垂直排列按钮 */
+    gap: 1rem;  /* 减少按钮间距 */
+  }
+  
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;  /* 按钮全宽显示 */
+    max-width: 280px;  /* 限制最大宽度 */
+    text-align: center;  /* 文本居中 */
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "label": "编译 KWDB",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "slug": "/compilation",
+    "description": "学习如何编译和构建 KWDB"
+  }
+}

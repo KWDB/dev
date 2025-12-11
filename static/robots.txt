@@ -1,0 +1,14 @@
+# robots.txt for KWDB Developer Documentation
+# 允许所有搜索引擎爬虫访问
+User-agent: *
+Allow: /
+
+# 指定 sitemap 位置
+Sitemap: https://kwdb.atomgit.net/dev/sitemap.xml
+
+# 禁止访问某些目录（如果有的话）
+# Disallow: /admin/
+# Disallow: /private/
+
+# 爬取延迟（可选，避免过于频繁的请求）
+Crawl-delay: 1
