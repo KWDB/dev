@@ -147,7 +147,11 @@ const config: Config = {
   // projectName: 'dev', // Usually your repo name.
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -253,7 +257,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'KWDB',
+      title: '',
       logo: {
         alt: 'KWDB Logo',
         src: 'img/KWDB-light.svg',
