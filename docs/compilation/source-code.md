@@ -97,7 +97,7 @@ KWDB 支持在 Linux 操作系统进行安装部署，下表列出了编译和�
 6. 安装依赖包（ubuntu）
 
    ```bash
-   sudo apt install -y build-essential libprotobuf-dev protobuf-compiler libssl-dev libgflags-dev libprotoc-dev liblz4-dev autoconf automake libtool
+   sudo apt install -y build-essential libprotobuf-dev protobuf-compiler libssl-dev libgflags-dev libprotoc-dev liblz4-dev autoconf automake libtool libncurses5-dev
    ```
 
 ## 下载代码
