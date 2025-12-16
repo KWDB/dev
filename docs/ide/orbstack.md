@@ -72,6 +72,19 @@ make
 make install
 ```
 
+## 配置 VS Code 远程调试
+
+用户可以直接在 VS Code 中配置远程调试，连接到 Orbstack 中的虚拟机进行调试。
+
+1. 安装 VS Code 插件：「Remote - SSH」。
+2. 打开 VS Code，点击左下角的双箭头图标。
+3. 选择「Remote SSH」，输入 Orbstack 中 VM 的 SSH 连接信息（`机器名@orb` 如果您创建的 VM 为默认虚拟机，则可直接使用 `orb`）。
+4. 按回车键后，VS Code 将自动连接至 Orbstack 中的虚拟机。
+5. 在 VS Code 中打开 KWDB 项目目录(`/home/go/src/gitee.com/kwbasedb`)，即可开始调试。
+
+![SSH Remote 连接 Orbstack](./img/orb-vscode.png)
+![连接后的界面](./img/orb-vscode-ssh.png)
+
 ## 小结
 
 通过 Orbstack + cloud-init 的方式，可以将原本需要多步手动执行的环境准备过程（配置源、安装依赖、部署 Go/CMake、设置环境变量）固化在一份 YAML 文件中，实现：
