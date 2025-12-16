@@ -1,0 +1,93 @@
+#cloud-config
+# 配置阿里云 apt 源（自动区分 amd64/其他架构，amd64 用 ubuntu 源，非 amd64 用 ubuntu-ports 源）
+apt:
+  primary:
+    - arches: [amd64]
+      uri: http://mirrors.aliyun.com/ubuntu/
+    - arches: [arm64, default]  # arm64 及其他架构统一使用 ubuntu-ports 源
+      uri: http://mirrors.aliyun.com/ubuntu-ports/
+  sources:
+    # amd64 架构专属源（ubuntu 仓库）
+    aliyun-amd64-main:
+      source: "deb [arch=amd64] http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse"
+      keyid: "3B4FE6ACC0B21F32"
+    aliyun-amd64-updates:
+      source: "deb [arch=amd64] http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse"
+    aliyun-amd64-security:
+      source: "deb [arch=amd64] http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse"
+    
+    # 非 amd64 架构专属源（ubuntu-ports 仓库，适配 arm64 等）
+    aliyun-ports-main:
+      source: "deb [arch=arm64] http://mirrors.aliyun.com/ubuntu-ports/ jammy main restricted universe multiverse"
+      keyid: "3B4FE6ACC0B21F32"
+    aliyun-ports-updates:
+      source: "deb [arch=arm64] http://mirrors.aliyun.com/ubuntu-ports/ jammy-updates main restricted universe multiverse"
+    aliyun-ports-security:
+      source: "deb [arch=arm64] http://mirrors.aliyun.com/ubuntu-ports/ jammy-security main restricted universe multiverse"
+  update: true
+  upgrade: true  # 自动升级系统包，确保依赖兼容性
+
+# 安装编译和运行 KWDB 所需的依赖包（apt 自动匹配架构对应的包版本）
+packages:
+  - ca-certificates
+  - git
+  - build-essential
+  - autoconf
+  - automake
+  - libtool
+  - checkinstall
+  - dpkg-dev
+  - devscripts
+  - libssl-dev
+  - libprotobuf-dev
+  - protobuf-compiler
+  - libprotoc-dev
+  - liblzma-dev
+  - libncurses5-dev
+  - libgflags-dev
+  - liblz4-dev
+  - geos
+  - xz-utils
+  - squashfs-tools
+  - squashfuse
+  - openssl
+  - wget
+  - tree
+  - gnupg2  # 用于导入 GPG 密钥，解决源验证问题
+
+runcmd:
+  - |
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "x86_64" ]; then
+      echo "amd64" > /tmp/go_arch.txt
+      echo "x86_64" > /tmp/cmake_arch.txt
+    elif [ "$ARCH" = "aarch64" ]; then
+      echo "arm64" > /tmp/go_arch.txt
+      echo "aarch64" > /tmp/cmake_arch.txt
+    else
+      echo "不支持的架构: $ARCH" >&2
+      exit 1
+    fi
+  - GO_ARCH=$(cat /tmp/go_arch.txt)
+  - CMAKE_ARCH=$(cat /tmp/cmake_arch.txt)
+
+  # 4. 安装 Go 1.22.5
+  - |
+      wget -q https://golang.google.cn/dl/go1.25.5.linux-${GO_ARCH}.tar.gz -O /tmp/go.tar.gz &&
+      tar -C /usr/local -xzf /tmp/go.tar.gz &&
+      rm -f /tmp/go.tar.gz
+
+
+  # 5. 安装 CMake 3.23.4
+  - |
+      wget -q https://github.com/Kitware/CMake/releases/download/v3.23.4/cmake-3.23.4-linux-${CMAKE_ARCH}.tar.gz -O /tmp/cmake.tar.gz &&
+      tar -C /usr/local -xzf /tmp/cmake.tar.gz &&
+      mv /usr/local/cmake-* /usr/local/cmake &&
+      rm -f /tmp/cmake.tar.gz
+
+
+  # 6. 配置环境变量
+  - echo 'export GOROOT=/usr/local/go' >> /etc/profile
+  - echo 'export GOPATH=/home/go' >> /etc/profile
+  - echo 'export GO111MODULE=off' >> /etc/profile
+  - echo 'export PATH=$PATH:/usr/local/go/bin:/usr/local/cmake/bin' >> /etc/profile
