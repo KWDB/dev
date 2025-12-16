@@ -91,9 +91,3 @@ runcmd:
   - echo 'export GOPATH=/home/go' >> /etc/profile
   - echo 'export GO111MODULE=off' >> /etc/profile
   - echo 'export PATH=$PATH:/usr/local/go/bin:/usr/local/cmake/bin' >> /etc/profile
-
-  # 7. 设置目录权限
-  # - mkdir -p /home/go
-  # - chmod -R 755 /usr/local/go
-  # - chmod -R 755 /usr/local/cmake
-  # - chmod -R 755 /home/go
