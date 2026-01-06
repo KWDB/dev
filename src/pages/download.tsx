@@ -29,8 +29,8 @@ const CardSkeleton = () => (
 // General Tools Data
 const generalTools: EcosystemTool[] = [
   {
-    id: 'kcd',
-    title: 'KCD (KaiwuDB Developer Center)',
+    id: 'kdc',
+    title: 'KDC (KaiwuDB Developer Center)',
     version: 'v3.0.0',
     description: '可视化的数据库开发与管理工具，提供便捷的图形化操作界面。适用于数据库日常管理、SQL 开发调试及性能监控等通用场景。',
     icon: <Monitor className="w-8 h-8" />,
@@ -92,7 +92,7 @@ const generalTools: EcosystemTool[] = [
 ];
 
 // Developer Ecosystem Tools Data
-const developerTools: EcosystemTool[] = [
+const initialDeveloperTools: EcosystemTool[] = [
   {
     id: 'tsbs',
     title: 'KWDB TSBS',
@@ -109,7 +109,7 @@ const developerTools: EcosystemTool[] = [
     icon: <Terminal className="w-8 h-8" />,
     platforms: [
       { name: 'Linux x86_64', url: 'https://github.com/KWDB/playground/releases/download/v0.4.0/kwdb-playground-linux-amd64', type: 'bin' },
-      { name: 'Linux ARM64', url: 'https://github.com/KWDB/playground/releases/download/v0.4.0/kwdb-playground-linux-amd64.tar.gz', type: 'tar.gz' },
+      { name: 'Linux ARM64', url: 'https://github.com/KWDB/playground/releases/download/v0.4.0/kwdb-playground-linux-arm64.tar.gz', type: 'tar.gz' },
       { name: 'Mac ARM64', url: 'https://github.com/KWDB/playground/releases/download/v0.4.0/kwdb-playground-darwin-arm64.tar.gz', type: 'tar.gz' },
       { name: 'Windows x86_64', url: 'https://github.com/KWDB/playground/releases/download/v0.4.0/kwdb-playground-windows-amd64.zip', type: 'zip' },
     ]
@@ -437,6 +437,7 @@ export default function Download(): ReactNode {
   const [activeFilter, setActiveFilter] = useState<'all' | 'general' | 'developer'>('all');
   const [releaseData, setReleaseData] = useState<ReleaseData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [devTools, setDevTools] = useState(initialDeveloperTools);
 
   const fetchReleases = async (force = false) => {
     setLoading(true);
@@ -450,8 +451,88 @@ export default function Download(): ReactNode {
     }
   };
 
+  const fetchPlaygroundRelease = async () => {
+    try {
+      const response = await fetch('https://api.github.com/repos/KWDB/playground/releases/latest');
+      if (!response.ok) return;
+      const data = await response.json();
+      const version = data.tag_name;
+      
+      const assets = data.assets.map((asset: any) => {
+        const name = asset.name;
+        let platformName = '';
+        let type = '';
+
+        if (name.includes('linux-amd64')) {
+           if (name.endsWith('.tar.gz')) {
+             platformName = 'Linux x86_64 (tar.gz)';
+             type = 'tar.gz';
+           } else if (!name.includes('.')) {
+             platformName = 'Linux x86_64';
+             type = 'bin';
+           }
+        } else if (name.includes('linux-arm64')) {
+           if (name.endsWith('.tar.gz')) {
+             platformName = 'Linux ARM64 (tar.gz)';
+             type = 'tar.gz';
+           } else if (!name.includes('.')) {
+             platformName = 'Linux ARM64';
+             type = 'bin';
+           }
+        } else if (name.includes('darwin-arm64')) {
+           if (name.endsWith('.tar.gz')) {
+             platformName = 'Mac ARM64 (tar.gz)';
+             type = 'tar.gz';
+           } else if (!name.includes('.')) {
+             platformName = 'Mac ARM64';
+             type = 'bin';
+           }
+        } else if (name.includes('darwin-amd64')) {
+          if (name.endsWith('.tar.gz')) {
+             platformName = 'Mac x86_64 (tar.gz)';
+             type = 'tar.gz';
+           } else if (!name.includes('.')) {
+             platformName = 'Mac x86_64';
+             type = 'bin';
+           }
+        } else if (name.includes('windows-amd64')) {
+          if (name.endsWith('.zip')) {
+             platformName = 'Windows x86_64 (zip)';
+             type = 'zip';
+           } else if (name.includes('.exe')) {
+             platformName = 'Windows x86_64';
+             type = 'exe';
+           }
+        }
+
+        if (!platformName) return null;
+
+        return {
+          name: platformName,
+          url: asset.browser_download_url,
+          type
+        };
+      }).filter(Boolean);
+
+      setDevTools(prev => prev.map(tool => {
+        if (tool.id === 'playground') {
+           return {
+             ...tool,
+             version,
+             platforms: assets.length > 0 ? assets : tool.platforms
+           };
+        }
+        return tool;
+      }));
+
+    } catch (e) {
+      console.error("Failed to fetch playground release", e);
+    }
+  };
+
   useEffect(() => {
     fetchReleases();
+    fetchPlaygroundRelease();
   }, []);
 
   const filteredGeneralTools = generalTools.filter(tool => 
@@ -459,7 +540,7 @@ export default function Download(): ReactNode {
     (tool.title.toLowerCase().includes(searchQuery.toLowerCase()) || tool.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const filteredDeveloperTools = developerTools.filter(tool => 
+  const filteredDeveloperTools = devTools.filter(tool => 
     (activeFilter === 'all' || activeFilter === 'developer') &&
     (tool.title.toLowerCase().includes(searchQuery.toLowerCase()) || tool.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
